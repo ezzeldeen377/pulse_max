@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "152794737513",
+    "project_id": "pulse-max",
+    "storage_bucket": "pulse-max.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:152794737513:android:e4f04839fb0d628ea4ebf8",
+        "android_client_info": {
+          "package_name": "com.example.pulse_max"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "152794737513-r3rtqep634fgs1evp362oev38kdchpsp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDE3SYPP9dOve25KZ5RFbRxbb5VXfMADVU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "152794737513-r3rtqep634fgs1evp362oev38kdchpsp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "152794737513-9r3pgn3ap23b6hhdgr5b82aaqeofq334.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.pulseMax"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
