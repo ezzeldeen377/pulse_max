@@ -3,9 +3,10 @@ import 'package:flutter/rendering.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:pulse_max/core/common/cubit/app_user/app_user_cubit.dart';
+import 'package:pulse_max/core/common/entities/user_model.dart';
 import 'package:pulse_max/core/helpers/shared_prefernece_utiles.dart';
-import 'package:pulse_max/core/routes/router.dart';
-import 'package:pulse_max/features/auth/data/models/user_model.dart';
+import 'package:pulse_max/core/routes/routes.dart';
 import 'package:pulse_max/features/doctor/domain/entities/doctor.dart';
 import 'package:pulse_max/features/doctor/presentation/providers/doctors_cubit.dart';
 import 'package:pulse_max/features/message/data/models/chat_model.dart';
@@ -36,19 +37,16 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
   late UserModel localUser;
 
   @override
-  void initState()  {
+  void initState() {
     super.initState();
     doctor = widget.doctor;
     _initializeUserData();
   }
+
   Future<void> _initializeUserData() async {
-  // Perform the async operation here.
-  final data = await SharedPreferneceUtiles.getData();
-  if (data != null) {
-      localUser = UserModel.fromJson(data);
-    
+    localUser = context.read<AppUserCubit>().state.user!;
   }
-}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,8 +60,9 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
           );
           final result = await context.read<DoctorsCubit>().startChat(chat);
           if (result != null) {
-            context.push(ChatScreen.routeName, extra: result);
-          }else{
+            Navigator.pushNamed(context, RouteNames.chatScreen,
+                arguments: result);
+          } else {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('Something went wrong'),

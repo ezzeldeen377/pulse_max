@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,14 +10,14 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pulse_max/core/di/di.dart';
+import 'package:pulse_max/core/common/cubit/app_user/app_user_cubit.dart';
+import 'package:uuid/uuid.dart';
+
+import 'package:pulse_max/core/common/entities/user_model.dart';
 import 'package:pulse_max/core/helpers/shared_prefernece_utiles.dart';
-import 'package:pulse_max/features/auth/data/models/user_model.dart';
-import 'package:pulse_max/features/doctor/domain/entities/doctor.dart';
 import 'package:pulse_max/features/message/data/models/chat_model.dart';
 import 'package:pulse_max/features/message/presentation/cubits/chats_cubit.dart';
 import 'package:pulse_max/features/message/presentation/cubits/chats_state.dart';
-import 'package:uuid/uuid.dart';
 
 class ChatScreen extends StatefulWidget {
   static const routeName = '/chat';
@@ -32,27 +33,17 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   List<types.Message> _messages = [];
-  var _user;
+ late types.User _user;
 
   @override
-  void initState()  {
-    super.initState();
-    init();
-  
-  }
-void init()async{
-          final localUser = UserModel.fromJson((await SharedPreferneceUtiles.getData())!);
+void initState() {
+  super.initState();
+  initUser();
+}
+initUser(){
+    _user=context.read<AppUserCubit>().state.user!.toTypesUser();
 
-      setState(() 
-       {
-            _user = types.User(
-        id: localUser.uid,
-        createdAt: localUser.createdAt?.millisecondsSinceEpoch,
-        firstName: localUser.username,
-        imageUrl: localUser.profilePicture,
-            );
-      });
-  }
+}
   void _addMessage(types.Message message) {
     setState(() {
       _messages.insert(0, message);

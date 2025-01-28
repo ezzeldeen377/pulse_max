@@ -51,8 +51,5 @@ class DoctorRepositoryImpl implements DoctorRepository {
     }
   }
 
-  @override
-  void listen(Function(List<DoctorModel> p1) callback) {
-    return doctorRemoteDataSource.listen(callback);
-  }
+
 }

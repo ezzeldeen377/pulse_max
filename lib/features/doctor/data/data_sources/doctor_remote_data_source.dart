@@ -9,7 +9,6 @@ abstract class DoctorRemoteDataSource {
   Future<Unit> createDoctor(DoctorModel doctor);
   Future<Unit> updateDoctor(DoctorModel doctor);
   Future<Unit> deleteDoctor(DoctorModel doctor);
-  void listen(Function(List<DoctorModel>) callback);
 }
 @Injectable(as:DoctorRemoteDataSource)
 class DoctorRemoteDataSourceImpl extends DoctorRemoteDataSource {
@@ -41,28 +40,6 @@ class DoctorRemoteDataSourceImpl extends DoctorRemoteDataSource {
    return querySnapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
   }
   
-@override
-void listen(Function(List<DoctorModel>) callback) {
-  FirebaseFirestore.instance
-      .collection(Env.doctorsTable) // Replace Env.doctorsTable with your collection name
-      .snapshots()
-      .listen((QuerySnapshot snapshot) {
-        List<DoctorModel> doctors = [];
-
-        try {
-          // Parse each document in the snapshot into a DoctorModel
-          for (var doc in snapshot.docs) {
-            doctors.add(DoctorModel.fromJson(doc.data() as Map<String, dynamic>));
-          }
-
-          // Pass the parsed list to the callback
-          callback(doctors);
-        } catch (e) {
-          // Handle errors in parsing
-          print('Error parsing doctor data: $e');
-        }
-      });
-}
 
   
   @override
