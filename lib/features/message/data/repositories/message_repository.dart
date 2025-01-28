@@ -5,7 +5,7 @@ import 'package:pulse_max/features/message/data/data_sources/message_remote_data
 import 'package:pulse_max/features/message/data/models/chat_model.dart';
 
 abstract class MessageRepository {
-  Future<Either<String, List<ChatModel>>> getChats();
+  Future<Either<String, List<ChatModel>>> getUserChats(String uid);
   Future<Either<String,ChatModel>> createChat(ChatModel chat);
    void listenOnChatMessages(Function(List<types.Message> p1) callback,String chatId);
      Future<Either<String ,Unit>> sendMessage(types.TextMessage message, String chatId);
@@ -17,9 +17,9 @@ class MessageRepositoryImpl implements MessageRepository {
   MessageRepositoryImpl({required this.dataSource});
 
   @override
-  Future<Either<String, List<ChatModel>>> getChats() async {
+  Future<Either<String, List<ChatModel>>> getUserChats(String uid) async {
     try {
-      final rawData = await dataSource.getChats();
+      final rawData = await dataSource.getUserChats(uid);
       return Right(rawData.map((data) => ChatModel.fromMap(data)).toList());
     } catch (e) {
       return Left(e.toString());

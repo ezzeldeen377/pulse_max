@@ -7,7 +7,7 @@ import 'package:pulse_max/features/message/data/models/chat_model.dart';
 abstract class MessageRemoteDataSource {
   Future<Unit> sendMessage(types.TextMessage message, String chatId);
   Future<ChatModel> createChat(ChatModel chat);
-  Future<List<Map<String, dynamic>>> getChats();
+  Future<List<Map<String, dynamic>>> getUserChats(String uid);
   Future<List<types.Message>> getAllMessages();
   void listOnChatMessages(
       Function(List<types.Message>) callback, String chatId);
@@ -37,9 +37,23 @@ class MessageRemoteDataSourceImpl implements MessageRemoteDataSource {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getChats() async {
-    final chats = await chatCollection.get();
-    return chats.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+  Future<List<Map<String, dynamic>>> getUserChats(String uid) async {
+final senderChats = await chatCollection
+      .where('senderId', isEqualTo: uid)
+      .get();
+
+  // Query for chats where the user is the receiver
+  final receiverChats = await chatCollection
+      .where('receiverId', isEqualTo: uid)
+      .get();
+
+  // Combine the results
+  final allChats = [...senderChats.docs, ...receiverChats.docs];
+
+  // Remove duplicates (optional)
+  final uniqueChats = allChats.toSet().toList();
+
+     return uniqueChats.map((doc) => doc.data() as Map<String, dynamic>).toList();
   }
 
   @override

@@ -16,6 +16,7 @@ extension DoctorsStateExtension on DoctorsState{
   bool get isEmpty => status == DoctorsStatus.empty;
   bool get isInitial => status == DoctorsStatus.initial;
 }
+
 class DoctorsState {
   final DoctorsStatus status;
   final List<Doctor>? doctors;
@@ -37,4 +38,7 @@ class DoctorsState {
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }
+
+  @override
+  String toString() => 'DoctorsState(status: $status, errorMessage: $errorMessage)';
 }

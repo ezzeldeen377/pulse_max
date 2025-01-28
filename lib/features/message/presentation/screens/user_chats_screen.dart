@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:pulse_max/core/routes/routes.dart';
 import 'package:pulse_max/features/message/data/models/chat_model.dart';
 import 'package:pulse_max/features/message/presentation/cubits/chats_cubit.dart';
 import 'package:pulse_max/features/message/presentation/cubits/chats_state.dart';
@@ -20,9 +21,15 @@ class UserChatsScreen extends StatelessWidget {
       ),
       body: BlocBuilder<ChatsCubit, ChatsState>(
         builder: (context, state) {
-         final chats=state.chats??[];
-         if(chats.isEmpty) return const Center(child: Text('No Chats'),);
-         if(state.isLoading) return const Center(child:  CircularProgressIndicator(),);
+          final chats = state.chats ?? [];
+          if (chats.isEmpty)
+            return const Center(
+              child: Text('No Chats'),
+            );
+          if (state.isLoading)
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           return ListView.builder(
             itemCount: chats.length,
             itemBuilder: (context, index) {
@@ -49,7 +56,8 @@ class UserChatsScreen extends StatelessWidget {
                   ],
                 ),
                 onTap: () {
-                  context.push(ChatScreen.routeName, extra: chat);
+                  Navigator.pushNamed(context, RouteNames.chatScreen,
+                      arguments: chat);
                 },
               );
             },

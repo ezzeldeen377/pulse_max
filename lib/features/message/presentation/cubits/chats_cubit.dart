@@ -11,10 +11,11 @@ class ChatsCubit extends Cubit<ChatsState> {
   ChatsCubit({required this.messageRepository})
       : super(const ChatsState(status: ChatsStatus.initial));
 
-  Future<void> getChats() async {
+
+  Future<void> getChats(String uid) async {
     emit(state.copyWith(status: ChatsStatus.loading));
     try {
-      final response = await messageRepository.getChats();
+      final response = await messageRepository.getUserChats(uid);
       response.fold(
         (l) => emit(state.copyWith(status: ChatsStatus.error, errorMessage: l)),
         (r) => emit(state.copyWith(status: ChatsStatus.success, chats: r)),
