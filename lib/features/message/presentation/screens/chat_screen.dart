@@ -10,11 +10,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pulse_max/core/common/cubit/app_user/app_user_cubit.dart';
 import 'package:uuid/uuid.dart';
 
-import 'package:pulse_max/core/common/entities/user_model.dart';
-import 'package:pulse_max/core/helpers/shared_prefernece_utiles.dart';
+import 'package:pulse_max/core/common/cubit/app_user/app_user_cubit.dart';
 import 'package:pulse_max/features/message/data/models/chat_model.dart';
 import 'package:pulse_max/features/message/presentation/cubits/chats_cubit.dart';
 import 'package:pulse_max/features/message/presentation/cubits/chats_state.dart';
@@ -33,17 +31,18 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   List<types.Message> _messages = [];
- late types.User _user;
+  late types.User _user;
 
   @override
-void initState() {
-  super.initState();
-  initUser();
-}
-initUser(){
-    _user=context.read<AppUserCubit>().state.user!.toTypesUser();
+  void initState() {
+    super.initState();
+    initUser();
+  }
 
-}
+  initUser() {
+    _user = context.read<AppUserCubit>().state.user!.toTypesUser();
+  }
+
   void _addMessage(types.Message message) {
     setState(() {
       _messages.insert(0, message);
@@ -219,7 +218,6 @@ initUser(){
 
     context.read<ChatsCubit>().sendMessage(textMessage, widget.chat.id!);
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -228,14 +226,17 @@ initUser(){
         title: Row(
           children: [
             CircleAvatar(
-              backgroundImage:
-                  NetworkImage(widget.chat.receiverProfilePicture ?? ''),
+              backgroundImage: NetworkImage(_user.id == widget.chat.senderId
+                  ? widget.chat.receiverProfilePicture ?? ''
+                  : widget.chat.senderId ?? ''),
               // child: Image.network(widget.doctor.imageUrl),
             ),
             const SizedBox(
               width: 10,
             ),
-            Text(widget.chat.receiverName ?? ''),
+            Text(_user.id == widget.chat.senderId
+                ? widget.chat.receiverName ?? ''
+                : widget.chat.senderName ?? ''),
           ],
         ),
         actions: [
@@ -255,16 +256,20 @@ initUser(){
       ),
       body: BlocBuilder<ChatsCubit, ChatsState>(
         builder: (context, state) {
-          return _user !=null ? Chat(
-            messages: state.messages ?? [],
-            onAttachmentPressed: _handleAttachmentPressed,
-            onMessageTap: _handleMessageTap,
-            onPreviewDataFetched: _handlePreviewDataFetched,
-            onSendPressed: _handleSendPressed,
-            showUserAvatars: true,
-            showUserNames: true,
-            user: _user,
-          ):Center(child: CircularProgressIndicator(),);
+          return _user != null
+              ? Chat(
+                  messages: state.messages ?? [],
+                  onAttachmentPressed: _handleAttachmentPressed,
+                  onMessageTap: _handleMessageTap,
+                  onPreviewDataFetched: _handlePreviewDataFetched,
+                  onSendPressed: _handleSendPressed,
+                  showUserAvatars: true,
+                  showUserNames: true,
+                  user: _user,
+                )
+              : Center(
+                  child: CircularProgressIndicator(),
+                );
         },
       ),
     );

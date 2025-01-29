@@ -25,7 +25,7 @@ class CustomMainBlocConsumer extends StatelessWidget {
         if (state.isInstalled()) {
           appUserCubit.isUserLoggedIn();
         } else if (state.isLoggedIn()) {
-          await appUserCubit.getUser(uid: state.user!.uid);
+          await appUserCubit.getUser(uid: state.user!.uid!);
         } else if (state.isGettedData()) {
           appUserCubit.saveUserData(state.user!);
         } else if (state.isFailureSaveData()) {

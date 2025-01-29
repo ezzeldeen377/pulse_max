@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MeasurementPage extends StatefulWidget {
   const MeasurementPage({super.key});
@@ -20,6 +21,7 @@ class _MeasurementPage extends State<MeasurementPage> {
   int rpm = 0;
 
   final List<FlSpot> _graphData = [];
+  final List<FlSpot> realTimeData = [];
   int _timeCounter = 0;
 
   @override
@@ -38,16 +40,19 @@ class _MeasurementPage extends State<MeasurementPage> {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         // Generate random values
-        tpm = _random.nextInt(100);
+        tpm = 60 + _random.nextInt(100);
         temperature = 20 + _random.nextInt(80); // Temperature in range 20-100
         rpm = 500 + _random.nextInt(3500); // RPM in range 500-4000
 
         // Update graph data
         _graphData.add(FlSpot(_timeCounter.toDouble(), tpm.toDouble()));
+        realTimeData.add(FlSpot(_timeCounter.toDouble(), tpm.toDouble()));
         _timeCounter++;
 
-        // Keep only the latest 10 points for the graph
-        
+        // Keep only the latest 20 points
+        if (_graphData.length > 20) {
+          _graphData.removeAt(0); // Remove the oldest value
+        }
       });
     });
   }
@@ -75,28 +80,96 @@ class _MeasurementPage extends State<MeasurementPage> {
             const SizedBox(height: 24),
 
             // Graph section
-            Expanded(
+            SizedBox(
+              height: 400.h,
               child: LineChart(
                 LineChartData(
+                  // Define the chart's line data
                   lineBarsData: [
                     LineChartBarData(
                       spots: _graphData,
                       isCurved: true,
-                      color: Colors.blue,
+                      color: Colors.white, // White line color
                       dotData: const FlDotData(show: false),
                       belowBarData: BarAreaData(show: false),
                     ),
                   ],
-                  titlesData: const FlTitlesData(
+                  // Define the Y and X axis ranges, labels, and appearance
+                  titlesData: FlTitlesData(
                     leftTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: true),
+                      axisNameWidget: const Padding(
+                        padding: EdgeInsets.only(right: 8.0),
+                        child: Text(
+                          'TPM',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        interval: 50, // Show labels every 50 units
+                        getTitlesWidget: (value, meta) {
+                          return Text(
+                            value.toInt().toString(),
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 12),
+                          );
+                        },
+                      ),
                     ),
                     bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: true),
+                      axisNameWidget: const Padding(
+                        padding: EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          'Seconds',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        interval: 2, // Show labels every 2 seconds
+                        getTitlesWidget: (value, meta) {
+                          return Text(
+                            value.toInt().toString(),
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 12),
+                          );
+                        },
+                      ),
                     ),
                   ),
-                  borderData: FlBorderData(show: true),
-                  gridData: const FlGridData(show: true),
+                  // Define the chart's visual appearance
+                  borderData: FlBorderData(
+                    show: true,
+                    border: const Border(
+                      left: BorderSide(color: Colors.white, width: 2),
+                      bottom: BorderSide(color: Colors.white, width: 2),
+                    ),
+                  ),
+                  gridData: FlGridData(
+                    show: true,
+                    drawHorizontalLine: true,
+                    drawVerticalLine: false,
+                    horizontalInterval:
+                        50, // Gridlines every 50 units on Y-axis
+                    getDrawingHorizontalLine: (value) {
+                      return FlLine(
+                        color:
+                            Colors.white.withOpacity(0.5), // White grid lines
+                        strokeWidth: 1,
+                      );
+                    },
+                  ),
+                  minY: 0, // Minimum value for Y-axis
+                  maxY: 200, // Maximum value for Y-axis
+                  backgroundColor: Colors.red, // Red background
                 ),
               ),
             ),

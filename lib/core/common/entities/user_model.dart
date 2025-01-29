@@ -1,14 +1,15 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
 class UserModel {
-  final String uid;
-  final String email;
-  final String name;
-  final DateTime createdAt;
+   String? uid;
+  final String? email;
+  final String? name;
+  final DateTime? createdAt;
+  final String? gender;
   final String? type;
-  final String? city;
   final String? profileImage;
   final String? phoneNumber;
   UserModel({
@@ -16,16 +17,16 @@ class UserModel {
     required this.email,
     required this.name,
     required this.createdAt,
+    this.gender,
     required this.type,
-    this.city,
     this.profileImage,
     this.phoneNumber,
   });
   // Add any other fields you need
   types.User toTypesUser() {
     return types.User(
-      id: uid,
-      createdAt: createdAt.millisecondsSinceEpoch,
+      id: uid!,
+      createdAt: createdAt!.millisecondsSinceEpoch,
       firstName: name,
       imageUrl: profileImage,
     );
@@ -35,8 +36,8 @@ class UserModel {
     String? email,
     String? name,
     DateTime? createdAt,
+    String? gender,
     String? type,
-    String? city,
     String? profileImage,
     String? phoneNumber,
   }) {
@@ -45,8 +46,8 @@ class UserModel {
       email: email ?? this.email,
       name: name ?? this.name,
       createdAt: createdAt ?? this.createdAt,
+      gender: gender ?? this.gender,
       type: type ?? this.type,
-      city: city ?? this.city,
       profileImage: profileImage ?? this.profileImage,
       phoneNumber: phoneNumber ?? this.phoneNumber,
     );
@@ -59,9 +60,9 @@ class UserModel {
       'uid': uid,
       'email': email,
       'name': name,
-      'createdAt': createdAt.millisecondsSinceEpoch,
+      'createdAt': createdAt?.millisecondsSinceEpoch,
+      'gender': gender,
       'type': type,
-      'city': city,
       'profileImage': profileImage,
       'phoneNumber': phoneNumber,
     };
@@ -69,12 +70,12 @@ class UserModel {
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      uid: map['uid'] as String,
-      email: map['email'] as String,
-      name: map['name'] as String,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int),
+      uid: map['uid'] != null ? map['uid'] as String : null,
+      email: map['email'] != null ? map['email'] as String : null,
+      name: map['name'] != null ? map['name'] as String : null,
+      createdAt: map['createdAt'] != null ? DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int) : null,
+      gender: map['gender'] != null ? map['gender'] as String : null,
       type: map['type'] != null ? map['type'] as String : null,
-      city: map['city'] != null ? map['city'] as String : null,
       profileImage: map['profileImage'] != null ? map['profileImage'] as String : null,
       phoneNumber: map['phoneNumber'] != null ? map['phoneNumber'] as String : null,
     );
@@ -86,7 +87,7 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(uid: $uid, email: $email, name: $name, createdAt: $createdAt, type: $type, city: $city, profileImage: $profileImage, phoneNumber: $phoneNumber)';
+    return 'UserModel(uid: $uid, email: $email, name: $name, createdAt: $createdAt, gender: $gender, type: $type, profileImage: $profileImage, phoneNumber: $phoneNumber)';
   }
 
   @override
@@ -98,8 +99,8 @@ class UserModel {
       other.email == email &&
       other.name == name &&
       other.createdAt == createdAt &&
+      other.gender == gender &&
       other.type == type &&
-      other.city == city &&
       other.profileImage == profileImage &&
       other.phoneNumber == phoneNumber;
   }
@@ -110,9 +111,10 @@ class UserModel {
       email.hashCode ^
       name.hashCode ^
       createdAt.hashCode ^
+      gender.hashCode ^
       type.hashCode ^
-      city.hashCode ^
       profileImage.hashCode ^
       phoneNumber.hashCode;
   }
 }
+enum Gender { male, female }

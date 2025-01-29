@@ -90,14 +90,15 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i522.GetDoctors(doctorRepository: gh<_i849.DoctorRepository>()));
     gh.factory<_i959.UpdateDoctor>(() =>
         _i959.UpdateDoctor(doctorRepository: gh<_i849.DoctorRepository>()));
-    gh.factory<_i933.ChatsCubit>(() =>
-        _i933.ChatsCubit(messageRepository: gh<_i684.MessageRepository>()));
-    gh.factory<_i96.DoctorsCubit>(() => _i96.DoctorsCubit(
+    gh.lazySingleton<_i96.DoctorsCubit>(() => _i96.DoctorsCubit(
           getDoctors: gh<_i522.GetDoctors>(),
           updateDoctor: gh<_i959.UpdateDoctor>(),
           createDoctor: gh<_i2.CreateDoctor>(),
           startChatWithDoctor: gh<_i432.StartChatWithDoctor>(),
+          repository: gh<_i849.DoctorRepository>(),
         ));
+    gh.factory<_i933.ChatsCubit>(() =>
+        _i933.ChatsCubit(messageRepository: gh<_i684.MessageRepository>()));
     return this;
   }
 }

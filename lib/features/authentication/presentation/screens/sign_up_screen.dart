@@ -13,12 +13,17 @@ import '../widgets/sign_up/custome_sign_up_listner.dart';
 import '../widgets/sign_up/custome_upper_text.dart';
 import '../widgets/sign_up/google_button.dart';
 
-class SignUpScreen extends StatelessWidget {
-    static const routeName = '/signUp';
+class SignUpScreen extends StatefulWidget {
+  static const routeName = '/signUp';
 
-  const SignUpScreen({
-    super.key,
-  });
+  const SignUpScreen({super.key});
+
+  @override
+  _SignUpScreenState createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  String? selectedRole = 'Patient'; // Default value is 'Patient'
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +38,77 @@ class SignUpScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const CustomeUpperText(),
+                  // Doctor / Patient selection options
+
                   SizedBox(height: 15.h),
+                  const CustomeUpperText(),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Doctor selection box
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedRole = 'Patient';
+                            });
+                          },
+                          child: Container(
+                            height: 50.h,
+                            width: 150.w,
+                            decoration: BoxDecoration(
+                              color: selectedRole == 'Patient'
+                                  ? AppPallete.darkVividVioletColor
+                                  : Colors.grey[200],
+                              borderRadius: BorderRadius.circular(10.r),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Patient',
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                color: selectedRole == 'Patient'
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 20.w),
+                        // Doctor selection box
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedRole = 'Doctor';
+                            });
+                          },
+                          child: Container(
+                            height: 50.h,
+                            width: 150.w,
+                            decoration: BoxDecoration(
+                              color: selectedRole == 'Doctor'
+                                  ? AppPallete.darkVividVioletColor
+                                  : Colors.grey[200],
+                              borderRadius: BorderRadius.circular(10.r),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Doctor',
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                color: selectedRole == 'Doctor'
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 15.h),
+
                   CustomeSignUpInputFields(cubit: cubit.signUpViewModel),
                   SizedBox(height: 27.h),
                   Column(
@@ -59,7 +133,7 @@ class SignUpScreen extends StatelessWidget {
                                               .emailController!.text,
                                           password: cubit.signUpViewModel
                                               .passwordController!.text,
-                                          type: 'normal',
+                                          type: selectedRole!,
                                         );
                                       }
                                     } else {
@@ -73,7 +147,8 @@ class SignUpScreen extends StatelessWidget {
                       SizedBox(height: 10.h),
                       CustomeAlreadyHaveAnAccountRow(
                         onTap: () {
-                            Navigator.pushReplacementNamed(context, RouteNames.signUp);
+                          Navigator.pushReplacementNamed(
+                              context, RouteNames.signUp);
                         },
                       ),
                       SizedBox(height: 22.h),
