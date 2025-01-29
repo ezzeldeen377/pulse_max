@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:pulse_max/features/doctor/domain/entities/doctor.dart';
+import 'package:pulse_max/features/doctor/data/models/appointment_model.dart';
+import 'package:pulse_max/features/doctor/data/models/doctor.dart';
+import 'package:pulse_max/features/doctor/domain/repository/doctor_repository.dart';
 import 'package:pulse_max/features/doctor/domain/usecases/create_doctor.dart';
 import 'package:pulse_max/features/doctor/domain/usecases/get_doctors.dart';
 import 'package:pulse_max/features/doctor/domain/usecases/start_chat_with_doctor.dart';
@@ -10,18 +12,20 @@ import 'package:pulse_max/features/doctor/presentation/providers/doctors_state.d
 import 'package:pulse_max/features/message/data/models/chat_model.dart';
 
 
-@injectable
+@lazySingleton
 class DoctorsCubit extends Cubit<DoctorsState> {
   final GetDoctors getDoctors;
   final UpdateDoctor updateDoctor;
   final CreateDoctor createDoctor;
   final StartChatWithDoctor startChatWithDoctor;
+  final DoctorRepository repository;
 
   DoctorsCubit({
     required this.getDoctors,
     required this.updateDoctor,
     required this.createDoctor,
-    required this.startChatWithDoctor
+    required this.startChatWithDoctor,
+    required this.repository
   }) : super(DoctorsState(status: DoctorsStatus.initial));
 
   Future<void> getDoctorss() async {
@@ -32,7 +36,7 @@ class DoctorsCubit extends Cubit<DoctorsState> {
   }
 
 
-  create(Doctor doctor) async {
+  create(DoctorModel doctor) async {
     final failureOrUnit = await createDoctor(doctor);
     failureOrUnit.fold((failure) {}, (_) {
       emit(state.copyWith(status: DoctorsStatus.success,doctors: [...state.doctors!, doctor]));
@@ -40,7 +44,7 @@ class DoctorsCubit extends Cubit<DoctorsState> {
 
   }
 
-  update(Doctor doctor) async {
+  update(DoctorModel doctor) async {
     await updateDoctor(doctor);
   }
 
@@ -48,7 +52,16 @@ class DoctorsCubit extends Cubit<DoctorsState> {
     final response = await startChatWithDoctor(chat);
     return response.fold((l) =>null, (r) => r); 
   }
+createAppointment(AppointmentModel app) async {
+    final failureOrUnit = await repository.createAppointment(app);
+    failureOrUnit.fold((failure) {
+            emit(state.copyWith(status: DoctorsStatus.error));
 
+    }, (_) {
+      emit(state.copyWith(status: DoctorsStatus.picked,));
+    });
+
+  }
   
 }
 

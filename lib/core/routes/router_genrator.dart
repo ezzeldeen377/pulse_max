@@ -10,7 +10,7 @@ import 'package:pulse_max/features/authentication/presentation/cubits/sign_up_cu
 import 'package:pulse_max/features/authentication/presentation/screens/on_boarding_screen.dart';
 import 'package:pulse_max/features/authentication/presentation/screens/sign_in_screen.dart';
 import 'package:pulse_max/features/authentication/presentation/screens/sign_up_screen.dart';
-import 'package:pulse_max/features/doctor/domain/entities/doctor.dart';
+import 'package:pulse_max/features/doctor/data/models/doctor.dart';
 import 'package:pulse_max/features/doctor/presentation/providers/doctors_cubit.dart';
 import 'package:pulse_max/features/doctor/presentation/screens/doctor_details_screen.dart';
 import 'package:pulse_max/features/doctor/presentation/screens/doctors_screen.dart';
@@ -50,7 +50,7 @@ class PulseMaxRouter {
                   child: const DoctorsScreen(),
                 ));
       case RouteNames.doctorDetails:
-        final args = settings.arguments as Doctor;
+        final args = settings.arguments as DoctorModel;
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
             create: (context) => getIt<DoctorsCubit>(),
@@ -71,7 +71,7 @@ class PulseMaxRouter {
         return MaterialPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => getIt<ChatsCubit>()
-                    ..getChats(context.read<AppUserCubit>().state.user!.uid),
+                    ..getChats(context.read<AppUserCubit>().state.user!.uid!),
                   child: const UserChatsScreen(),
                 ));
       case RouteNames.measurement:

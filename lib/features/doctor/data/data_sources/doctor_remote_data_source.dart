@@ -2,32 +2,36 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:pulse_max/core/env/env.dart';
-import 'package:pulse_max/features/doctor/data/models/doctor_model.dart';
+import 'package:pulse_max/features/doctor/data/models/appointment_model.dart';
+import 'package:pulse_max/features/doctor/data/models/doctor.dart';
 
 abstract class DoctorRemoteDataSource {
   Future<List<Map<String, dynamic>>?> getDoctorList();
   Future<Unit> createDoctor(DoctorModel doctor);
   Future<Unit> updateDoctor(DoctorModel doctor);
   Future<Unit> deleteDoctor(DoctorModel doctor);
+  Future<Unit> createAppointment(AppointmentModel app);
+  
 }
 @Injectable(as:DoctorRemoteDataSource)
 class DoctorRemoteDataSourceImpl extends DoctorRemoteDataSource {
   final firestore=FirebaseFirestore.instance;
 
    CollectionReference get doctorCollection => firestore.collection(Env.doctorsTable);
+   CollectionReference get appointmentCollection => firestore.collection('appointments');
   
   @override
   Future<Unit> createDoctor(DoctorModel doctor) async {
      var docRef =  doctorCollection.doc();
-     doctor.id=docRef.id;
-     await docRef.set(doctor.toJson());
+     doctor.uid=docRef.id;
+     await docRef.set(doctor.toMap());
      return Future.value(unit);
     
   }
   
   @override
   Future<Unit> deleteDoctor(DoctorModel doctor) async {
-    var docRef =  doctorCollection.doc(doctor.id);
+    var docRef =  doctorCollection.doc(doctor.uid);
     await docRef.delete();
     return Future.value(unit);
 
@@ -44,11 +48,19 @@ class DoctorRemoteDataSourceImpl extends DoctorRemoteDataSource {
   
   @override
   Future<Unit> updateDoctor(DoctorModel doctor) async {
-    var docRef =  doctorCollection.doc(doctor.id);
-    await  docRef.update(doctor.toJson());
+    var docRef =  doctorCollection.doc(doctor.uid);
+    await  docRef.update(doctor.toMap());
     return Future.value(unit);
   
 }
+
+  @override
+  Future<Unit> createAppointment(AppointmentModel app) async {
+    var docRef =  appointmentCollection.doc();
+     app.appointmentId=docRef.id;
+     await docRef.set(app.toMap());
+     return Future.value(unit);
+  }
 
   
 }

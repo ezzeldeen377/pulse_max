@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:pulse_max/core/common/cubit/app_user/app_user_cubit.dart';
 import 'package:pulse_max/core/routes/routes.dart';
 import 'package:pulse_max/features/message/data/models/chat_model.dart';
 import 'package:pulse_max/features/message/presentation/cubits/chats_cubit.dart';
@@ -15,6 +16,7 @@ class UserChatsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser=context.read<AppUserCubit>().state.user;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chats'),
@@ -37,9 +39,9 @@ class UserChatsScreen extends StatelessWidget {
               return ListTile(
                 leading: CircleAvatar(
                   backgroundImage:
-                      NetworkImage(chat.receiverProfilePicture ?? ''),
+                      NetworkImage(currentUser?.uid==chat.senderId? chat.receiverProfilePicture ?? '':chat.senderProfilePicture ?? ''),
                 ),
-                title: Text(chat.receiverName ?? ''),
+                title: Text( currentUser?.uid==chat.senderId?chat.receiverName ?? '':chat.senderName ?? ''),
                 subtitle: Text(
                   chat.lastMessage ?? '',
                   maxLines: 1,

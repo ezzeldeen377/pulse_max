@@ -101,7 +101,7 @@ class HomeScreen extends StatelessWidget {
                             title: 'Diagnostic',
                             description: 'Book a diagnostic test',
                             onTap: () {
-                                                          Navigator.pushNamed(context, RouteNames.measurement);
+                                                        context.read<AppUserCubit>().signOut();
 
                             }, 
                           ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:pulse_max/features/doctor/domain/entities/doctor.dart';
+import 'package:pulse_max/features/doctor/data/models/doctor.dart';
 
 class DoctorCard extends StatelessWidget {
   const DoctorCard({
@@ -8,7 +8,7 @@ class DoctorCard extends StatelessWidget {
     required this.doctor,
   });
 
-  final Doctor doctor;
+  final DoctorModel doctor;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class DoctorCard extends StatelessWidget {
                         height: size.height * 0.05,
                       ),
                       Text(
-                        doctor.name??'',
+                        doctor.name??"",
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       SizedBox(
@@ -73,7 +73,7 @@ class DoctorCard extends StatelessWidget {
           left: size.width * 0.08,
           child: CircleAvatar(
             radius: 40,
-            backgroundImage: NetworkImage(doctor.imageUrl??""),
+            backgroundImage: NetworkImage(doctor.profileImage??""),
           ),
         ),
       ],

@@ -3,14 +3,14 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:injectable/injectable.dart';
 import 'package:pulse_max/features/message/data/models/chat_model.dart';
+import 'package:rxdart/rxdart.dart';
 
 abstract class MessageRemoteDataSource {
   Future<Unit> sendMessage(types.TextMessage message, String chatId);
   Future<ChatModel> createChat(ChatModel chat);
-  Future<List<Map<String, dynamic>>> getUserChats(String uid);
+  Stream<List<Map<String, dynamic>>> getUserChats(String uid) ;
   Future<List<types.Message>> getAllMessages();
-  void listOnChatMessages(
-      Function(List<types.Message>) callback, String chatId);
+  Stream<List<types.Message>> listOnChatMessages( String chatId);
 }
 
 @Injectable(as: MessageRemoteDataSource)
@@ -24,7 +24,7 @@ class MessageRemoteDataSourceImpl implements MessageRemoteDataSource {
     await docRef.update({
       'messages': FieldValue.arrayUnion(
           [message.toJson()]), // Add the new message to the list
-      'lastMessage': (message as types.TextMessage).text, // Update lastMessage
+      'lastMessage': (message).text, // Update lastMessage
       'lastMessageTime': DateTime.now().millisecondsSinceEpoch,
     });
     return Future.value(unit);
@@ -37,24 +37,36 @@ class MessageRemoteDataSourceImpl implements MessageRemoteDataSource {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getUserChats(String uid) async {
-final senderChats = await chatCollection
+Stream<List<Map<String, dynamic>>> getUserChats(String uid) {
+  // Query for chats where the user is the sender
+  final senderChatsStream = chatCollection
       .where('senderId', isEqualTo: uid)
-      .get();
+      .snapshots();
 
   // Query for chats where the user is the receiver
-  final receiverChats = await chatCollection
+  final receiverChatsStream = chatCollection
       .where('receiverId', isEqualTo: uid)
-      .get();
+      .snapshots();
 
-  // Combine the results
-  final allChats = [...senderChats.docs, ...receiverChats.docs];
+  // Combine both streams
+  return  Rx.combineLatest2(
+    senderChatsStream,
+    receiverChatsStream,
+    (QuerySnapshot senderSnapshot, QuerySnapshot receiverSnapshot) {
+      final senderChats = senderSnapshot.docs;
+      final receiverChats = receiverSnapshot.docs;
 
-  // Remove duplicates (optional)
-  final uniqueChats = allChats.toSet().toList();
+      // Combine the results
+      final allChats = [...senderChats, ...receiverChats];
 
-     return uniqueChats.map((doc) => doc.data() as Map<String, dynamic>).toList();
-  }
+      // Remove duplicates based on the document ID
+      final uniqueChats = allChats.toSet();
+
+      // Map the documents to a list of maps
+      return uniqueChats.map((doc) => doc.data() as Map<String, dynamic>).toList();
+    },
+  );
+}
 
   @override
   Future<ChatModel> createChat(ChatModel chat) async {
@@ -70,30 +82,26 @@ final senderChats = await chatCollection
     await chatRef.set(chat.toMap());
     return chat;
   }
+@override
+  Stream<List<types.Message>> listOnChatMessages(String chatId) {
+  return chatCollection.doc(chatId).snapshots().map((DocumentSnapshot snapshot) {
+    if (snapshot.exists) {
+      try {
+        // Parse the document data into a ChatModel
+        ChatModel chat = ChatModel.fromMap(snapshot.data() as Map<String, dynamic>);
 
-  @override
-  void listOnChatMessages(
-      Function(List<types.Message> p1) callback, String chatId) {
-    chatCollection.doc(chatId).snapshots().listen((DocumentSnapshot snapshot) {
-      if (snapshot.exists) {
-        try {
-          // Parse the document data into a ChatModel
-          ChatModel chat =
-              ChatModel.fromMap(snapshot.data() as Map<String, dynamic>);
+        // Extract and sort messages
+        List<types.Message> messages = chat.messages ?? [];
+        messages.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
 
-          // Extract the messages from the ChatModel
-          List<types.Message> messages =
-              chat.messages ?? []; // Ensure the list is not null
-          messages.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
-          // Pass the parsed list to the callback
-          callback(messages);
-        } catch (e) {
-          // Handle errors in parsing
-          print('Error parsing chat data: $e');
-        }
-      } else {
-        print('Chat does not exist.');
+        return messages;
+      } catch (e) {
+rethrow;       
       }
-    });
-  }
+    } else {
+      throw Exception('Chat does not exist'); // Return an empty list if chat doesn't exist
+    }
+  });
+}
+
 }
