@@ -8,4 +8,5 @@ class RouteNames {
   static const chatScreen = '/chatScreen';
   static const userChats = '/userChats';
   static const measurement = '/measurement';
+  static const initial = '/initial';
 }

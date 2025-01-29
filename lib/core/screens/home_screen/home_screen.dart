@@ -103,7 +103,7 @@ class HomeScreen extends StatelessWidget {
                             onTap: () {
                                                           Navigator.pushNamed(context, RouteNames.measurement);
 
-                            },
+                            }, 
                           ),
                         ],
                       ),
@@ -111,60 +111,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Card(
-                          child: SizedBox(
-                            width: size.width,
-                            height: size.height * 0.2,
-                            child: const Center(
-                              child: Text('Awesome Add'),
-                            ),
-                          ),
-                        ),
-                        ListTile(
-                          title: Row(
-                            children: [
-                              const Text('Doctors near you'),
-                              const Spacer(),
-                              TextButton(
-                                onPressed: () {
-                                  context.push(DoctorsScreen.routeName);
-                                },
-                                child: const Text('See all'),
-                              ),
-                            ],
-                          ),
-                          subtitle: SizedBox(
-                            height: size.height * 0.4,
-                            child: BlocBuilder<DoctorsCubit, DoctorsState>(
-                                builder: (context, state) {
-                              final doctors = state.doctors ?? [];
-                              if (doctors.isEmpty)
-                                return const Center(
-                                  child: Text('No Doctors'),
-                                );
-                              return ListView.separated(
-                                  scrollDirection: Axis.horizontal,
-                                  itemBuilder: (context, index) {
-                                    return DoctorCard(doctor: doctors[index]);
-                                  },
-                                  separatorBuilder: (context, index) {
-                                    return const Divider();
-                                  },
-                                  itemCount: doctors.length);
-                            }),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+             
             ],
           ),
         ),

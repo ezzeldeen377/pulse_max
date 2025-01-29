@@ -4,6 +4,7 @@ import 'package:pulse_max/core/common/cubit/app_user/app_user_cubit.dart';
 import 'package:pulse_max/core/di/di.dart';
 import 'package:pulse_max/core/routes/routes.dart';
 import 'package:pulse_max/core/screens/home_screen/home_screen.dart';
+import 'package:pulse_max/core/screens/initial_screen.dart';
 import 'package:pulse_max/features/authentication/presentation/cubits/sign_in_cubit/sign_in_cubit.dart';
 import 'package:pulse_max/features/authentication/presentation/cubits/sign_up_cubit/sign_up_cubit.dart';
 import 'package:pulse_max/features/authentication/presentation/screens/on_boarding_screen.dart';
@@ -76,6 +77,9 @@ class PulseMaxRouter {
       case RouteNames.measurement:
         return MaterialPageRoute(
             builder: (context) => const MeasurementPage());
+      case RouteNames.initial:
+        return MaterialPageRoute(
+            builder: (context) => const InitialScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
