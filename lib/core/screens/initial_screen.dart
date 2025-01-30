@@ -1,21 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pulse_max/core/common/cubit/app_user/app_user_cubit.dart';
+import 'package:pulse_max/core/di/di.dart';
+import 'package:pulse_max/core/screens/home_screen/home_screen.dart';
+import 'package:pulse_max/features/message/presentation/cubits/chats_cubit.dart';
+import 'package:pulse_max/features/message/presentation/screens/user_chats_screen.dart';
 
 class InitialScreen extends StatefulWidget {
   const InitialScreen({super.key});
 
   @override
-  _InitialScreenState createState() =>
-      _InitialScreenState();
+  _InitialScreenState createState() => _InitialScreenState();
 }
 
 class _InitialScreenState extends State<InitialScreen> {
   int _currentIndex = 0; // Tracks the selected tab index
-  final PageController _pageController = PageController(); // Controls page sliding
+  final PageController _pageController =
+      PageController(); // Controls page sliding
 
   // List of pages to display
   final List<Widget> _pages = [
-    const Center(child:  Text('Home Page', style: TextStyle(fontSize: 24))),
-    const Center(child: Text('Search Page', style: TextStyle(fontSize: 24))),
+    const HomeScreen(),
+    BlocProvider(
+      create: (context) => getIt<ChatsCubit>()
+        ..getChats(context.read<AppUserCubit>().state.user!.uid!),
+      child: const UserChatsScreen(),
+    ),
     const Center(child: Text('Favorites Page', style: TextStyle(fontSize: 24))),
     const Center(child: Text('Profile Page', style: TextStyle(fontSize: 24))),
   ];
@@ -51,8 +61,8 @@ class _InitialScreenState extends State<InitialScreen> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
+            icon: Icon(Icons.chat),
+            label: 'chats',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
