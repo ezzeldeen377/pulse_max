@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pulse_max/core/common/cubit/app_user/app_user_state.dart';
 import 'package:pulse_max/core/routes/router_genrator.dart';
-import 'package:pulse_max/core/screens/home_screen/home_screen.dart';
+import 'package:pulse_max/core/screens/initial_screen.dart';
 import 'package:pulse_max/core/theme/app_pallete.dart';
 import 'package:pulse_max/core/utils/show_snack_bar.dart';
 import 'package:pulse_max/features/authentication/presentation/cubits/sign_in_cubit/sign_in_cubit.dart';
 import 'package:pulse_max/features/authentication/presentation/screens/on_boarding_screen.dart';
-import 'package:pulse_max/features/doctor/presentation/providers/doctors_cubit.dart';
-
 import 'core/common/cubit/app_user/app_user_cubit.dart';
 import 'core/di/di.dart';
 import 'features/authentication/presentation/screens/sign_in_screen.dart';
@@ -25,7 +23,7 @@ class CustomMainBlocConsumer extends StatelessWidget {
         if (state.isInstalled()) {
           appUserCubit.isUserLoggedIn();
         } else if (state.isLoggedIn()) {
-          await appUserCubit.getUser(uid: state.user!.uid);
+          await appUserCubit.getUser(uid: state.user!.uid!);
         } else if (state.isGettedData()) {
           appUserCubit.saveUserData(state.user!);
         } else if (state.isFailureSaveData()) {
@@ -61,10 +59,7 @@ class CustomMainBlocConsumer extends StatelessWidget {
       return const OnBoardingScreen();
     }
     if (state.isLoggedIn() || state.isGettedData() || state.isSuccess()) {
-      return BlocProvider(
-        create:(context)=> getIt<DoctorsCubit>()..getDoctorss(),
-        child: const HomeScreen(),
-      );
+      return const InitialScreen();
     }
     if (state.isNotLoggedIn() || state.isClearUserData()) {
       return BlocProvider(

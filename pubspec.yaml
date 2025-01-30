@@ -81,6 +81,8 @@ dependencies:
   connectivity_plus: ^6.1.2
   flutter_screenutil: ^5.9.3
   fl_chart: ^0.70.2
+  rxdart: ^0.28.0
+  flutter_image_slideshow: ^0.1.6
 
 dev_dependencies:
   flutter_test:

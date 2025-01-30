@@ -4,12 +4,13 @@ import 'package:pulse_max/core/common/cubit/app_user/app_user_cubit.dart';
 import 'package:pulse_max/core/di/di.dart';
 import 'package:pulse_max/core/routes/routes.dart';
 import 'package:pulse_max/core/screens/home_screen/home_screen.dart';
+import 'package:pulse_max/core/screens/initial_screen.dart';
 import 'package:pulse_max/features/authentication/presentation/cubits/sign_in_cubit/sign_in_cubit.dart';
 import 'package:pulse_max/features/authentication/presentation/cubits/sign_up_cubit/sign_up_cubit.dart';
 import 'package:pulse_max/features/authentication/presentation/screens/on_boarding_screen.dart';
 import 'package:pulse_max/features/authentication/presentation/screens/sign_in_screen.dart';
 import 'package:pulse_max/features/authentication/presentation/screens/sign_up_screen.dart';
-import 'package:pulse_max/features/doctor/domain/entities/doctor.dart';
+import 'package:pulse_max/features/doctor/data/models/doctor.dart';
 import 'package:pulse_max/features/doctor/presentation/providers/doctors_cubit.dart';
 import 'package:pulse_max/features/doctor/presentation/screens/doctor_details_screen.dart';
 import 'package:pulse_max/features/doctor/presentation/screens/doctors_screen.dart';
@@ -49,7 +50,7 @@ class PulseMaxRouter {
                   child: const DoctorsScreen(),
                 ));
       case RouteNames.doctorDetails:
-        final args = settings.arguments as Doctor;
+        final args = settings.arguments as DoctorModel;
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
             create: (context) => getIt<DoctorsCubit>(),
@@ -70,12 +71,15 @@ class PulseMaxRouter {
         return MaterialPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => getIt<ChatsCubit>()
-                    ..getChats(context.read<AppUserCubit>().state.user!.uid),
+                    ..getChats(context.read<AppUserCubit>().state.user!.uid!),
                   child: const UserChatsScreen(),
                 ));
       case RouteNames.measurement:
         return MaterialPageRoute(
             builder: (context) => const MeasurementPage());
+      case RouteNames.initial:
+        return MaterialPageRoute(
+            builder: (context) => const InitialScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

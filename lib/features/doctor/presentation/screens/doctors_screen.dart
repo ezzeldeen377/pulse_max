@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pulse_max/features/doctor/domain/entities/doctor.dart';
+import 'package:pulse_max/features/doctor/data/models/doctor.dart';
 import 'package:pulse_max/features/doctor/presentation/providers/doctors_cubit.dart';
 import 'package:pulse_max/features/doctor/presentation/widgets/doctor_tile.dart';
 
@@ -23,7 +23,7 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
   Widget build(BuildContext context) {
     var doctors = context.watch<DoctorsCubit>().state.doctors;
 
-    List<Doctor> filteredDoctors = doctors??[];
+    List<DoctorModel> filteredDoctors = doctors??[];
 
     if (query != null) {
       filteredDoctors = doctors
@@ -49,7 +49,7 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
                   IconButton(
                     onPressed: () {
                       context.read<DoctorsCubit>().createDoctor(
-                            Doctor.fake(),
+                            DoctorModel.faker(),
                           );
                     },
                     icon: const Icon(Icons.add),

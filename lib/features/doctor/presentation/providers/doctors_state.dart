@@ -1,12 +1,13 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:pulse_max/features/doctor/domain/entities/doctor.dart';
+import 'package:pulse_max/features/doctor/data/models/doctor.dart';
 
 enum DoctorsStatus{
   initial,
   loading,
   success,
   error,
-  empty
+  empty,
+  picked
 }
 
 extension DoctorsStateExtension on DoctorsState{
@@ -15,11 +16,12 @@ extension DoctorsStateExtension on DoctorsState{
   bool get isError => status == DoctorsStatus.error;
   bool get isEmpty => status == DoctorsStatus.empty;
   bool get isInitial => status == DoctorsStatus.initial;
+  bool get isPicked => status==DoctorsStatus.picked;
 }
 
 class DoctorsState {
   final DoctorsStatus status;
-  final List<Doctor>? doctors;
+  final List<DoctorModel>? doctors;
   final String? errorMessage;
   DoctorsState({
     required this.status,
@@ -29,7 +31,7 @@ class DoctorsState {
 
   DoctorsState copyWith({
     DoctorsStatus? status,
-    List<Doctor>? doctors,
+    List<DoctorModel>? doctors,
     String? errorMessage,
   }) {
     return DoctorsState(

@@ -1,174 +1,126 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:icons_plus/icons_plus.dart';
-import 'package:provider/provider.dart';
-import 'package:pulse_max/core/common/cubit/app_user/app_user_cubit.dart';
-import 'package:pulse_max/core/common/cubit/app_user/app_user_state.dart';
-import 'package:pulse_max/core/routes/routes.dart';
-import 'package:pulse_max/core/screens/home_screen/widgets/doctor_card.dart';
-import 'package:pulse_max/core/screens/home_screen/widgets/nav_item.dart';
-import 'package:pulse_max/features/authentication/presentation/screens/sign_in_screen.dart';
-import 'package:pulse_max/features/doctor/presentation/providers/doctors_cubit.dart';
-import 'package:pulse_max/features/doctor/presentation/providers/doctors_state.dart';
-import 'package:pulse_max/features/doctor/presentation/screens/doctors_screen.dart';
-import 'package:pulse_max/features/message/presentation/screens/user_chats_screen.dart';
+import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:pulse_max/features/doctor/presentation/widgets/doctor_card.dart';
+import 'package:pulse_max/features/doctor/presentation/widgets/doctor_speciality_section.dart';
+import 'package:pulse_max/features/doctor/presentation/widgets/top_section.dart';
 
 class HomeScreen extends StatelessWidget {
-  static const routeName = '/';
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    return BlocListener<AppUserCubit, AppUserState>(
-      listener: (context, state) {
-  if (state.isClearUserData()) {
-          context.pop();
-          context.pushReplacementNamed(SignInScreen.routeName);
-        }      },
-      child: Scaffold(
-        body: SafeArea(
-          // maintainBottomViewPadding: false,
-          minimum: EdgeInsets.zero,
-          child: Column(
-            children: [
-              Stack(
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            const TopSection(),
+            SizedBox(height: 10.h),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: ImageSlideshow(
+              
+                /// Width of the [ImageSlideshow].
+                width: double.infinity,
+                /// Height of the [ImageSlideshow].
+                
+              height: 203,
+                /// The page to show when first creating the [ImageSlideshow].
+                initialPage: 0,
+              
+                /// The color to paint the indicator.
+                indicatorColor: Colors.blue,
+              
+                /// The color to paint behind th indicator.
+                indicatorBackgroundColor: Colors.grey,
+              
+                /// The widgets to display in the [ImageSlideshow].
+                /// Add the sample image file into the images folder
                 children: [
-                  Column(
-                    children: [
-                      Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(size.width * 0.1),
-                            bottomRight: Radius.circular(size.width * 0.1),
-                          ),
-                        ),
-                        color: Theme.of(context).primaryColor,
-                        child: SizedBox(
-                          width: size.width,
-                          height: size.height * 0.2,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Pulse Max',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge!
-                                    .copyWith(
-                                      color: Colors.white,
-                                    ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: size.width,
-                        height: size.height * 0.1,
-                        // color: Theme.of(context).primaryColor,
-                      ),
+                  const DoctorCard(),
+                  const DoctorCard(),
+                  const DoctorCard(),
+                  const DoctorCard(),
+                ],
+              
+                /// Called whenever the page in the center of the viewport changes.
+                onPageChanged: (value) {
+                  print('Page changed: $value');
+                },
+              
+                /// Auto scroll interval.
+                /// Do not auto scroll with null or 0.
+                autoPlayInterval: 3000,
+              
+                /// Loops back to first slide.
+                isLoop: true,
+              ),
+            ),
+          
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Stack(alignment: Alignment.center,
+                children: [
+                 Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [   
+                       
+                      Expanded(child: _buildButton("مواعيد الأدوية", Colors.red, topLeft: true)),
+                      const SizedBox(width: 10),
+                      Expanded(child: _buildButton("احجز دكتور", Colors.blue, topRight: true)),
                     ],
                   ),
-                  Positioned(
-                    bottom: 25,
-                    child: SizedBox(
-                      width: size.width,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          NavItem(
-                            icon: FontAwesome.hospital,
-                            title: 'Doctor',
-                            description: 'Search for a doctor',
-                            onTap: () {
-                            Navigator.pushNamed(context, RouteNames.doctorsScreen);
-                            },
-                          ),
-                          NavItem(
-                            icon: Icons.home,
-                            title: 'Medicine',
-                            description: 'Search for a medicine',
-                            onTap: () {
-                            Navigator.pushNamed(context, RouteNames.userChats);
-                            },
-                          ),
-                          NavItem(
-                            icon: Icons.home,
-                            title: 'Diagnostic',
-                            description: 'Book a diagnostic test',
-                            onTap: () {
-                                                          Navigator.pushNamed(context, RouteNames.measurement);
-
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Expanded(child: _buildButton("ابدأ محادثة مع طبيبك", Colors.green, bottomLeft: true)),
+                      const SizedBox(width: 10),
+                      Expanded(child: _buildButton("تاريخك المرضي", Colors.yellow, bottomRight: true)),
+                    ],
                   ),
                 ],
               ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Card(
-                          child: SizedBox(
-                            width: size.width,
-                            height: size.height * 0.2,
-                            child: const Center(
-                              child: Text('Awesome Add'),
+                   Container(
+                            width: 70,
+                            height: 70,
+                            decoration: const BoxDecoration(
+                              color: Colors.black,
+                              shape: BoxShape.circle,
                             ),
                           ),
-                        ),
-                        ListTile(
-                          title: Row(
-                            children: [
-                              const Text('Doctors near you'),
-                              const Spacer(),
-                              TextButton(
-                                onPressed: () {
-                                  context.push(DoctorsScreen.routeName);
-                                },
-                                child: const Text('See all'),
-                              ),
-                            ],
-                          ),
-                          subtitle: SizedBox(
-                            height: size.height * 0.4,
-                            child: BlocBuilder<DoctorsCubit, DoctorsState>(
-                                builder: (context, state) {
-                              final doctors = state.doctors ?? [];
-                              if (doctors.isEmpty)
-                                return const Center(
-                                  child: Text('No Doctors'),
-                                );
-                              return ListView.separated(
-                                  scrollDirection: Axis.horizontal,
-                                  itemBuilder: (context, index) {
-                                    return DoctorCard(doctor: doctors[index]);
-                                  },
-                                  separatorBuilder: (context, index) {
-                                    return const Divider();
-                                  },
-                                  itemCount: doctors.length);
-                            }),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                ],
               ),
-            ],
-          ),
+            ),
+            DoctorSpecialitySection(),
+          ],
         ),
       ),
     );
   }
+
+ Widget _buildButton(String text, Color color,
+      {bool topLeft = false, bool topRight = false, bool bottomLeft = false, bool bottomRight = false}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(topLeft ? 15 : 0),
+          topRight: Radius.circular(topRight ? 15 : 0),
+          bottomLeft: Radius.circular(bottomLeft ? 15 : 0),
+          bottomRight: Radius.circular(bottomRight ? 15 : 0),
+        ),
+      ),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+      ),
+    );
+  }
+
 }

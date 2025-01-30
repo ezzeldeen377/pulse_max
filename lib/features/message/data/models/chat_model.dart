@@ -8,6 +8,8 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 class ChatModel {
   String? id;
   String? senderId;
+  String? senderName;
+  String? senderProfilePicture;
   String? receiverId;
   String? receiverName;
   String? receiverProfilePicture;
@@ -17,6 +19,8 @@ class ChatModel {
   ChatModel({
     this.id,
     this.senderId,
+    this.senderName,
+    this.senderProfilePicture,
     this.receiverId,
     this.receiverName,
     this.receiverProfilePicture,
@@ -29,6 +33,8 @@ class ChatModel {
     final faker = Faker();
     return ChatModel(
       senderId: faker.guid.guid(),
+      senderName: faker.person.name(),
+      senderProfilePicture: faker.image.image(),
       receiverId: faker.guid.guid(),
       receiverName: faker.person.name(),
       receiverProfilePicture: faker.image.image(),
@@ -50,6 +56,8 @@ class ChatModel {
   ChatModel copyWith({
     String? id,
     String? senderId,
+    String? senderName,
+    String? senderProfilePicture,
     String? receiverId,
     String? receiverName,
     String? receiverProfilePicture,
@@ -60,6 +68,8 @@ class ChatModel {
     return ChatModel(
       id: id ?? this.id,
       senderId: senderId ?? this.senderId,
+      senderName: senderName ?? this.senderName,
+      senderProfilePicture: senderProfilePicture ?? this.senderProfilePicture,
       receiverId: receiverId ?? this.receiverId,
       receiverName: receiverName ?? this.receiverName,
       receiverProfilePicture: receiverProfilePicture ?? this.receiverProfilePicture,
@@ -73,6 +83,8 @@ class ChatModel {
     return <String, dynamic>{
       'id': id,
       'senderId': senderId,
+      'senderName': senderName,
+      'senderProfilePicture': senderProfilePicture,
       'receiverId': receiverId,
       'receiverName': receiverName,
       'receiverProfilePicture': receiverProfilePicture,
@@ -86,6 +98,8 @@ class ChatModel {
     return ChatModel(
       id: map['id'] != null ? map['id'] as String : null,
       senderId: map['senderId'] != null ? map['senderId'] as String : null,
+      senderName: map['senderName'] != null ? map['senderName'] as String : null,
+      senderProfilePicture: map['senderProfilePicture'] != null ? map['senderProfilePicture'] as String : null,
       receiverId: map['receiverId'] != null ? map['receiverId'] as String : null,
       receiverName: map['receiverName'] != null ? map['receiverName'] as String : null,
       receiverProfilePicture: map['receiverProfilePicture'] != null ? map['receiverProfilePicture'] as String : null,
@@ -112,6 +126,8 @@ class ChatModel {
     return 
       other.id == id &&
       other.senderId == senderId &&
+      other.senderName == senderName &&
+      other.senderProfilePicture == senderProfilePicture &&
       other.receiverId == receiverId &&
       other.receiverName == receiverName &&
       other.receiverProfilePicture == receiverProfilePicture &&
@@ -124,6 +140,8 @@ class ChatModel {
   int get hashCode {
     return id.hashCode ^
       senderId.hashCode ^
+      senderName.hashCode ^
+      senderProfilePicture.hashCode ^
       receiverId.hashCode ^
       receiverName.hashCode ^
       receiverProfilePicture.hashCode ^
