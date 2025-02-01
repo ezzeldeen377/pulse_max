@@ -8,6 +8,7 @@ class SignUpViewModel {
   TextEditingController? nameController = TextEditingController();
   TextEditingController? confirmPasswordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
+  String roleSelected='patient';
  
   void dispose() {
     emailController?.dispose();

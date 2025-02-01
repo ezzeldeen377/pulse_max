@@ -4,9 +4,10 @@ import 'package:pulse_max/core/errors/failures/failure.dart';
 import 'package:pulse_max/core/errors/failures/network_failure.dart';
 import 'package:pulse_max/core/network/network_info.dart';
 import 'package:pulse_max/features/doctor/data/data_sources/doctor_remote_data_source.dart';
-import 'package:pulse_max/features/doctor/data/models/doctor_model.dart';
-import 'package:pulse_max/features/doctor/domain/entities/doctor.dart';
+import 'package:pulse_max/features/doctor/data/models/appointment_model.dart';
+import 'package:pulse_max/features/doctor/data/models/doctor.dart';
 import 'package:pulse_max/features/doctor/domain/repository/doctor_repository.dart';
+
 @Injectable(as: DoctorRepository)
 class DoctorRepositoryImpl implements DoctorRepository {
   final DoctorRemoteDataSource doctorRemoteDataSource;
@@ -17,10 +18,10 @@ class DoctorRepositoryImpl implements DoctorRepository {
   });
 
   @override
-  Future<Either<Failure, Unit>> createDoctor(Doctor doctor) async {
+  Future<Either<Failure, Unit>> createDoctor(DoctorModel doctor) async {
     if (await networkInfo.isConnected) {
       await doctorRemoteDataSource.createDoctor(
-        DoctorModel.fromEntity(doctor),
+        doctor,
       );
       return right(unit);
     }
@@ -29,10 +30,11 @@ class DoctorRepositoryImpl implements DoctorRepository {
   }
 
   @override
-  Future<Either<Failure, List<DoctorModel>>> getDoctorList() async {
+  Future<Either<Failure, List<DoctorModel>>> getDoctorList(String? category) async {
     if (await networkInfo.isConnected) {
-      final rawData = await doctorRemoteDataSource.getDoctorList();
-      final doctorList = rawData?.map((data) =>DoctorModel.fromJson(data)).toList();
+      final rawData = await doctorRemoteDataSource.getDoctorList(category);
+      final doctorList =
+          rawData?.map((data) => DoctorModel.fromMap(data)).toList();
       return right(doctorList!);
     } else {
       return left(NetworkFailure());
@@ -40,10 +42,10 @@ class DoctorRepositoryImpl implements DoctorRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> updateDoctor(Doctor doctor) async {
+  Future<Either<Failure, Unit>> updateDoctor(DoctorModel doctor) async {
     if (await networkInfo.isConnected) {
       doctorRemoteDataSource.updateDoctor(
-        DoctorModel.fromEntity(doctor),
+        doctor,
       );
       return right(unit);
     } else {
@@ -51,5 +53,15 @@ class DoctorRepositoryImpl implements DoctorRepository {
     }
   }
 
+  @override
+  Future<Either<Failure, Unit>> createAppointment(AppointmentModel app) async {
+    if (await networkInfo.isConnected) {
+      await doctorRemoteDataSource.createAppointment(
+        app,
+      );
+      return right(unit);
+    }
 
+    return Left(NetworkFailure());
+}
 }

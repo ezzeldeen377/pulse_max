@@ -25,14 +25,10 @@ class CustomSignInInputFields extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Email",
-            style: TextStyles.font17RobotoAccentBlackColor2Regular,
-          ),
-          SizedBox(height: 5.h),
+       
           CustomTextFormFeld(
             validator: emailValidator,
-            hintText: "Enter your email",
+            hintText: "Email",
             keyboardType: TextInputType.emailAddress,
             suffixIcon: const Icon(
               Icons.email_outlined,
@@ -41,15 +37,11 @@ class CustomSignInInputFields extends StatelessWidget {
             controller: viewModel.emailController,
           ),
           SizedBox(height: 15.h),
-          Text(
-            "Password",
-            style: TextStyles.font17RobotoAccentBlackColor2Regular,
-          ),
-          SizedBox(height: 5.h),
+          
           BlocBuilder<SignInCubit, SignInState>(
             builder: (context, state) {
               return CustomTextFormFeld(
-                hintText: "Enter your password",
+                hintText: "Password",
                 obscureText: state.isVisible,
                 keyboardType: TextInputType.visiblePassword,
                 suffixIcon: IconButton(

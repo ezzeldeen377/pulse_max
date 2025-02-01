@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:pulse_max/features/authentication/presentation/screens/sign_in_screen.dart';
+import 'package:pulse_max/core/routes/routes.dart';
 
 import '../../../../../core/theme/style.dart';
 
@@ -19,7 +18,7 @@ class CustomeAlreadyHaveAnAccountRow extends StatelessWidget {
         ),
         InkWell(
           onTap: () {
-                      context.pushReplacementNamed(SignInScreen.routeName);
+                      Navigator.pushNamed(context,RouteNames.signIn);
 
           },
           child: Text(

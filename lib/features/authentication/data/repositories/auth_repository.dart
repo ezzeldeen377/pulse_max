@@ -48,8 +48,9 @@ class AuthRepositoryImpl implements AuthRepository {
 
       final userModel = UserModel(
           uid: userCredential.user!.uid,
-          profileImage: userCredential.user?.photoURL ,
-          phoneNumber: userCredential.user?.phoneNumber ,
+          profileImage: userCredential.user?.photoURL ??
+              'https://cdn.vectorstock.com/i/1000v/92/16/default-profile-picture-avatar-user-icon-vector-46389216.jpg',
+          phoneNumber: userCredential.user?.phoneNumber,
           email: email,
           name: name,
           createdAt: DateTime.now(),
@@ -117,7 +118,7 @@ class AuthRepositoryImpl implements AuthRepository {
         return UserModel(
             type: 'normal',
             profileImage: userCredential.user?.photoURL,
-            phoneNumber: userCredential.user?.phoneNumber ,
+            phoneNumber: userCredential.user?.phoneNumber,
             uid: userCredential.user!.uid,
             email: userCredential.user!.email!,
             name: userCredential.user!.displayName!,

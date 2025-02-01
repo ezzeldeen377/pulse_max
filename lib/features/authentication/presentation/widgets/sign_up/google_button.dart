@@ -15,10 +15,10 @@ class GoogleButton extends StatelessWidget {
     return InkWell(
       onTap: onTapButton,
       child: Container(
-        height: 44.h,
+        height: 45.h,
         width: 305.w,
         decoration: BoxDecoration(
-          color: AppPallete.lgWhiteColor,
+          color: AppPallete.whiteColor,
           borderRadius: BorderRadius.circular(30.r),
         ),
         child: Row(

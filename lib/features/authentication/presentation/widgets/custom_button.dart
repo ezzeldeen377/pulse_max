@@ -14,23 +14,23 @@ class CustomButton extends StatelessWidget {
     return InkWell(
         onTap: onTapButton,
         child: Container(
-          height: 44.h,
+          height: 57.h,
           width: 305.w,
           decoration:  BoxDecoration(
             gradient: const LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
               colors: [
-                AppPallete.lightVividVioletColor,
-                AppPallete.darkVividVioletColor,
+                Color.fromARGB(255, 119, 245, 245),
+                AppColor.teal,
               ],),
               borderRadius: BorderRadius.circular(38.r),
           ),
           child: Center(
             child: Text(buttonText,
-                style: TextStyles.font14RobotoWhiteColorBold),
+                style:  TextStyle(fontSize: 28.sp,fontFamily: 'Roboto',fontWeight: FontWeight.bold,color: Colors.white),
           ),
-        ),
+       )),
       );
   }
 }

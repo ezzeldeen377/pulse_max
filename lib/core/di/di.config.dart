@@ -34,8 +34,10 @@ import '../../features/doctor/domain/usecases/get_doctors.dart' as _i522;
 import '../../features/doctor/domain/usecases/start_chat_with_doctor.dart'
     as _i432;
 import '../../features/doctor/domain/usecases/update_doctor.dart' as _i959;
-import '../../features/doctor/presentation/providers/doctors_cubit.dart'
-    as _i96;
+import '../../features/doctor/presentation/bloc/bloc/edit_doctor_bloc.dart'
+    as _i985;
+import '../../features/doctor/presentation/bloc/doctors/doctors_cubit.dart'
+    as _i871;
 import '../../features/message/data/data_sources/message_remote_data_source.dart'
     as _i110;
 import '../../features/message/data/repositories/message_repository.dart'
@@ -68,6 +70,8 @@ extension GetItInjectableX on _i174.GetIt {
           doctorRemoteDataSource: gh<_i337.DoctorRemoteDataSource>(),
           networkInfo: gh<_i932.NetworkInfo>(),
         ));
+    gh.factory<_i985.DoctorBloc>(
+        () => _i985.DoctorBloc(repository: gh<_i849.DoctorRepository>()));
     gh.factory<_i935.AuthRepository>(() => _i935.AuthRepositoryImpl(
         authDataSource: gh<_i21.AuthRemoteDataSource>()));
     gh.factory<_i531.SignUpCubit>(() => _i531.SignUpCubit(
@@ -90,14 +94,15 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i522.GetDoctors(doctorRepository: gh<_i849.DoctorRepository>()));
     gh.factory<_i959.UpdateDoctor>(() =>
         _i959.UpdateDoctor(doctorRepository: gh<_i849.DoctorRepository>()));
-    gh.factory<_i933.ChatsCubit>(() =>
-        _i933.ChatsCubit(messageRepository: gh<_i684.MessageRepository>()));
-    gh.factory<_i96.DoctorsCubit>(() => _i96.DoctorsCubit(
+    gh.factory<_i871.DoctorsCubit>(() => _i871.DoctorsCubit(
           getDoctors: gh<_i522.GetDoctors>(),
           updateDoctor: gh<_i959.UpdateDoctor>(),
           createDoctor: gh<_i2.CreateDoctor>(),
           startChatWithDoctor: gh<_i432.StartChatWithDoctor>(),
+          repository: gh<_i849.DoctorRepository>(),
         ));
+    gh.factory<_i933.ChatsCubit>(() =>
+        _i933.ChatsCubit(messageRepository: gh<_i684.MessageRepository>()));
     return this;
   }
 }

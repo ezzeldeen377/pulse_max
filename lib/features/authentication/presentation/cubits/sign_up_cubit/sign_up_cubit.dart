@@ -97,7 +97,14 @@ class SignUpCubit extends Cubit<SignUpState> {
   Future<void> sendVerificationEmail() async {
     await _authRepository.sendVerificationEmail();
   }
-
+ void changeRole(String value) {
+  if (state.role != value) { // Ensure state is actually changing
+    emit(state.copyWith(role: value));
+    print("New role emitted: $value");
+  } else {
+    print("Role is already ${state.role}. No state change.");
+  }
+}
   @override
   Future<void> close() {
     signUpViewModel.dispose();

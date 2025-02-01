@@ -16,7 +16,8 @@ enum SignUpStatus {
   failureDeleteUser,
   successSignOut,
   failureSignOut,
-  checked
+  checked,
+  roleChanged
 }
 
 extension SignInStateExtension on SignUpState {
@@ -32,6 +33,7 @@ extension SignInStateExtension on SignUpState {
   bool get isSuccessDeleteUser => state == SignUpStatus.successDeleteUser;
   bool get isFailureDeleteUser => state == SignUpStatus.failureDeleteUser;
   bool get isChecked => state == SignUpStatus.checked;
+  bool get isRoleChanged =>  state== SignUpStatus.roleChanged;
 }
 
 class SignUpState {
@@ -41,6 +43,7 @@ class SignUpState {
   final bool isVisiblePassword;
   final bool isVisiblePasswordConfirm;
   final bool isChecked;
+  final String role;
   SignUpState({
     required this.state,
     this.userModel,
@@ -48,6 +51,7 @@ class SignUpState {
     this.isVisiblePassword = true,
     this.isVisiblePasswordConfirm = true,
     this.isChecked = false,
+     this.role='patient',
   });
 
   SignUpState copyWith({
@@ -57,21 +61,23 @@ class SignUpState {
     bool? isVisiblePassword,
     bool? isVisiblePasswordConfirm,
     bool? isChecked,
+    String? role,
   }) {
     return SignUpState(
       state: state ?? this.state,
       userModel: userModel ?? this.userModel,
       erorrMessage: erorrMessage ?? this.erorrMessage,
       isVisiblePassword: isVisiblePassword ?? this.isVisiblePassword,
-      isVisiblePasswordConfirm:
-          isVisiblePasswordConfirm ?? this.isVisiblePasswordConfirm,
+      isVisiblePasswordConfirm: isVisiblePasswordConfirm ?? this.isVisiblePasswordConfirm,
       isChecked: isChecked ?? this.isChecked,
+      role: role ?? this.role,
     );
   }
 
   @override
-  String toString() =>
-      'SignInState(state: $state, userModel: $userModel, erorrMessage: $erorrMessage isVisiblePassword: $isVisiblePassword isVisiblePasswordConfirm: $isVisiblePasswordConfirm)';
+  String toString() {
+    return 'SignUpState(state: $state, userModel: $userModel, erorrMessage: $erorrMessage, isVisiblePassword: $isVisiblePassword, isVisiblePasswordConfirm: $isVisiblePasswordConfirm, isChecked: $isChecked, role: $role)';
+  }
 
   @override
   bool operator ==(covariant SignUpState other) {
