@@ -1,6 +1,9 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:faker/faker.dart';
+import 'package:flutter/foundation.dart';
+
 import 'package:pulse_max/core/common/entities/user_model.dart';
 
 class DoctorModel extends UserModel {
@@ -12,71 +15,65 @@ class DoctorModel extends UserModel {
   final String? bio;
   final Map<String, String>? availability;
   final double? rating;
-  final List<Map<String, dynamic>>? reviews;
-  final List<String>? languagesSpoken;
+  final int? reviews;
   final double? consultationFee;
-  final List<String>? servicesOffered;
-  final List<String>? awardsAndCertifications;
-  final Map<String, String>? socialMediaLinks;
 
-  DoctorModel({
-    required super.uid,
-    required super.email,
-    required super.name,
-    required super.createdAt,
-    super.gender,
-    super.type,
-    super.profileImage,
-    super.phoneNumber,
-    this.specialization,
-    this.qualification,
-    this.licenseNumber,
-    this.hospitalOrClinicName,
-    this.yearsOfExperience,
-    this.bio,
-    this.availability,
-    this.rating,
-    this.reviews,
-    this.languagesSpoken,
-    this.consultationFee,
-    this.servicesOffered,
-    this.awardsAndCertifications,
-    this.socialMediaLinks,
-  });
+  DoctorModel(
+      {this.specialization,
+      this.qualification,
+      this.licenseNumber,
+      this.hospitalOrClinicName,
+      this.yearsOfExperience,
+      this.bio,
+      this.availability,
+      this.rating,
+      this.reviews,
+      this.consultationFee,
+      required super.uid,
+      required super.email,
+      required super.name,
+      required super.createdAt,
+      required super.type,
+      super.gender,
+      super.phoneNumber,
+      super.profileImage});
 
-factory DoctorModel.faker() {
-  var faker = Faker();
-  return DoctorModel(
-    uid: faker.guid.guid(),
-    email: faker.internet.email(),
-    name: faker.person.name(),
-    createdAt: faker.date.dateTime(),
-    gender: faker.randomGenerator.element(['Male', 'Female']),
-    type: faker.randomGenerator.element(['General Practitioner', 'Specialist']),
-    profileImage: faker.image.loremPicsum(
+  factory DoctorModel.faker() {
+    var faker = Faker();
+    return DoctorModel(
+      uid: faker.guid.guid(),
+      email: faker.internet.email(),
+      name: faker.person.name(),
+      createdAt: faker.date.dateTime(),
+      gender: faker.randomGenerator.element(['Male', 'Female']),
+      type: 'doctor',
+      profileImage: faker.image.loremPicsum(
           random: faker.randomGenerator.integer(
         400,
         min: 100,
       )),
-    phoneNumber: faker.phoneNumber.us(),
-    specialization: faker.job.title(),
-    qualification: faker.guid.guid(),
-    licenseNumber: faker.guid.guid(),
-    hospitalOrClinicName: faker.company.name(),
-    yearsOfExperience: faker.randomGenerator.integer(40, min: 1),
-    bio: faker.lorem.sentence(),
-    availability: {'Monday': '9:00-17:00', 'Tuesday': '9:00-17:00'},
-    rating: faker.randomGenerator.decimal(min: 1, scale: 5),
-    reviews: [
-      {'reviewer': faker.person.name(), 'comment': faker.lorem.sentence()}
-    ],
-    languagesSpoken: faker.lorem.words(3).map((e) => e.toString()).toList(),
-    consultationFee: faker.randomGenerator.decimal(min: 20, scale: 300),
-    servicesOffered: faker.lorem.words(5).map((e) => e.toString()).toList(),
-    awardsAndCertifications: faker.lorem.words(3).map((e) => e.toString()).toList(),
-    socialMediaLinks: {'LinkedIn': faker.internet.httpsUrl()},
-  );
-}
+      phoneNumber: faker.phoneNumber.us(),
+      specialization: faker.randomGenerator.element([
+        
+        "General",
+        "Neurology",
+        "Nutrition",
+        "Dentist",
+        "Pediatric",
+        "Radiology",
+        "Ophthalmology"
+      ]),
+      qualification: faker.guid.guid(),
+      licenseNumber: faker.guid.guid(),
+      hospitalOrClinicName: faker.company.name(),
+yearsOfExperience: faker.randomGenerator.integer(10, min: 1),
+      bio: faker.lorem.sentences(15).join(' '),
+      availability: {'Monday': '9:00-17:00', 'Tuesday': '9:00-17:00'},
+      rating: faker.randomGenerator.decimal(min: 1, scale: 5),
+      reviews: faker.randomGenerator.integer(100, min: 1),
+      consultationFee: faker.randomGenerator.decimal(min: 20, scale: 300),
+    );
+  }
 
   @override
   DoctorModel copyWith({
@@ -96,22 +93,18 @@ factory DoctorModel.faker() {
     String? bio,
     Map<String, String>? availability,
     double? rating,
-    List<Map<String, dynamic>>? reviews,
-    List<String>? languagesSpoken,
+    int? reviews,
     double? consultationFee,
-    List<String>? servicesOffered,
-    List<String>? awardsAndCertifications,
-    Map<String, String>? socialMediaLinks,
   }) {
     return DoctorModel(
-      uid: uid ?? this.uid,
-      email: email ?? this.email,
-      name: name ?? this.name,
-      createdAt: createdAt ?? this.createdAt,
-      type: type ?? this.type,
-      gender: gender ?? this.gender,
-      profileImage: profileImage ?? this.profileImage,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
+      uid: uid ?? super.uid,
+      email: email ?? super.email,
+      createdAt: createdAt ?? super.createdAt,
+      name: name ?? super.name,
+      type: type ?? super.type,
+      phoneNumber: phoneNumber ?? super.phoneNumber,
+      profileImage: profileImage ?? super.profileImage,
+      gender: gender ?? super.gender,
       specialization: specialization ?? this.specialization,
       qualification: qualification ?? this.qualification,
       licenseNumber: licenseNumber ?? this.licenseNumber,
@@ -121,11 +114,7 @@ factory DoctorModel.faker() {
       availability: availability ?? this.availability,
       rating: rating ?? this.rating,
       reviews: reviews ?? this.reviews,
-      languagesSpoken: languagesSpoken ?? this.languagesSpoken,
       consultationFee: consultationFee ?? this.consultationFee,
-      servicesOffered: servicesOffered ?? this.servicesOffered,
-      awardsAndCertifications: awardsAndCertifications ?? this.awardsAndCertifications,
-      socialMediaLinks: socialMediaLinks ?? this.socialMediaLinks,
     );
   }
 
@@ -142,11 +131,7 @@ factory DoctorModel.faker() {
       'availability': availability,
       'rating': rating,
       'reviews': reviews,
-      'languagesSpoken': languagesSpoken,
       'consultationFee': consultationFee,
-      'servicesOffered': servicesOffered,
-      'awardsAndCertifications': awardsAndCertifications,
-      'socialMediaLinks': socialMediaLinks,
     });
     return map;
   }
@@ -158,8 +143,10 @@ factory DoctorModel.faker() {
       name: map['name'] as String,
       createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int),
       type: map['type'] != null ? map['type'] as String : null,
-      profileImage: map['profileImage'] != null ? map['profileImage'] as String : null,
-      phoneNumber: map['phoneNumber'] != null ? map['phoneNumber'] as String : null,
+      profileImage:
+          map['profileImage'] != null ? map['profileImage'] as String : null,
+      phoneNumber:
+          map['phoneNumber'] != null ? map['phoneNumber'] as String : null,
       specialization: map['specialization'] as String?,
       qualification: map['qualification'] as String?,
       licenseNumber: map['licenseNumber'] as String?,
@@ -170,22 +157,8 @@ factory DoctorModel.faker() {
           ? Map<String, String>.from(map['availability'])
           : null,
       rating: map['rating'] as double?,
-      reviews: map['reviews'] != null
-          ? List<Map<String, dynamic>>.from(map['reviews'])
-          : null,
-      languagesSpoken: map['languagesSpoken'] != null
-          ? List<String>.from(map['languagesSpoken'])
-          : null,
+      reviews: map['reviews'] as int?,
       consultationFee: map['consultationFee'] as double?,
-      servicesOffered: map['servicesOffered'] != null
-          ? List<String>.from(map['servicesOffered'])
-          : null,
-      awardsAndCertifications: map['awardsAndCertifications'] != null
-          ? List<String>.from(map['awardsAndCertifications'])
-          : null,
-      socialMediaLinks: map['socialMediaLinks'] != null
-          ? Map<String, String>.from(map['socialMediaLinks'])
-          : null,
     );
   }
 
@@ -197,40 +170,28 @@ factory DoctorModel.faker() {
 
   @override
   String toString() {
-    return 'Doctor('
-        'uid: $uid, email: $email, name: $name, createdAt: $createdAt, type: $type, '
-        'specialization: $specialization, qualification: $qualification, licenseNumber: $licenseNumber, '
-        'hospitalOrClinicName: $hospitalOrClinicName, yearsOfExperience: $yearsOfExperience, bio: $bio, '
-        'rating: $rating, languagesSpoken: $languagesSpoken, consultationFee: $consultationFee, '
-        'servicesOffered: $servicesOffered, awardsAndCertifications: $awardsAndCertifications, '
-        'socialMediaLinks: $socialMediaLinks)';
+    return 'DoctorModel(specialization: $specialization, qualification: $qualification, licenseNumber: $licenseNumber, hospitalOrClinicName: $hospitalOrClinicName, yearsOfExperience: $yearsOfExperience, bio: $bio, availability: $availability, rating: $rating, reviews: $reviews, consultationFee: $consultationFee)';
   }
 
   @override
   bool operator ==(covariant DoctorModel other) {
     if (identical(this, other)) return true;
 
-    return super == other &&
-        other.specialization == specialization &&
+    return other.specialization == specialization &&
         other.qualification == qualification &&
         other.licenseNumber == licenseNumber &&
         other.hospitalOrClinicName == hospitalOrClinicName &&
         other.yearsOfExperience == yearsOfExperience &&
         other.bio == bio &&
-        other.availability == availability &&
+        mapEquals(other.availability, availability) &&
         other.rating == rating &&
         other.reviews == reviews &&
-        other.languagesSpoken == languagesSpoken &&
-        other.consultationFee == consultationFee &&
-        other.servicesOffered == servicesOffered &&
-        other.awardsAndCertifications == awardsAndCertifications &&
-        other.socialMediaLinks == socialMediaLinks;
+        other.consultationFee == consultationFee;
   }
 
   @override
   int get hashCode {
-    return super.hashCode ^
-        specialization.hashCode ^
+    return specialization.hashCode ^
         qualification.hashCode ^
         licenseNumber.hashCode ^
         hospitalOrClinicName.hashCode ^
@@ -239,10 +200,11 @@ factory DoctorModel.faker() {
         availability.hashCode ^
         rating.hashCode ^
         reviews.hashCode ^
-        languagesSpoken.hashCode ^
-        consultationFee.hashCode ^
-        servicesOffered.hashCode ^
-        awardsAndCertifications.hashCode ^
-        socialMediaLinks.hashCode;
+        consultationFee.hashCode;
   }
+
+  String toJson() => json.encode(toMap());
+
+  factory DoctorModel.fromJson(String source) =>
+      DoctorModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }

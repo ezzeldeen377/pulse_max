@@ -9,7 +9,7 @@ class GetDoctors {
 
   GetDoctors({required this.doctorRepository});
 
-  Future<Either<Failure, List<DoctorModel>>> call() async {
-    return await doctorRepository.getDoctorList();
+  Future<Either<Failure, List<DoctorModel>>> call(String? category) async {
+    return await doctorRepository.getDoctorList(category);
   }
 }

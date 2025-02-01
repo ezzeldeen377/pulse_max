@@ -30,9 +30,9 @@ class DoctorRepositoryImpl implements DoctorRepository {
   }
 
   @override
-  Future<Either<Failure, List<DoctorModel>>> getDoctorList() async {
+  Future<Either<Failure, List<DoctorModel>>> getDoctorList(String? category) async {
     if (await networkInfo.isConnected) {
-      final rawData = await doctorRemoteDataSource.getDoctorList();
+      final rawData = await doctorRemoteDataSource.getDoctorList(category);
       final doctorList =
           rawData?.map((data) => DoctorModel.fromMap(data)).toList();
       return right(doctorList!);

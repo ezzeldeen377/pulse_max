@@ -9,4 +9,5 @@ class RouteNames {
   static const userChats = '/userChats';
   static const measurement = '/measurement';
   static const initial = '/initial';
+  static const editDoctor = '/editDoctor';
 }

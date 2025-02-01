@@ -22,21 +22,25 @@ extension DoctorsStateExtension on DoctorsState{
 class DoctorsState {
   final DoctorsStatus status;
   final List<DoctorModel>? doctors;
+  final String? category;
   final String? errorMessage;
   DoctorsState({
     required this.status,
-     this.doctors,
-     this.errorMessage,
+    this.doctors,
+    this.category,
+    this.errorMessage,
   });
 
   DoctorsState copyWith({
     DoctorsStatus? status,
     List<DoctorModel>? doctors,
+    String? category,
     String? errorMessage,
   }) {
     return DoctorsState(
       status: status ?? this.status,
       doctors: doctors ?? this.doctors,
+      category: category ?? this.category,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }

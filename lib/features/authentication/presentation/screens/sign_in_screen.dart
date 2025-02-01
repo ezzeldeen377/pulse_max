@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:pulse_max/core/routes/routes.dart';
 import 'package:pulse_max/core/theme/app_pallete.dart';
 import 'package:pulse_max/features/authentication/presentation/widgets/sign_in/custome_title_text.dart';
@@ -24,74 +25,134 @@ class SignInScreen extends StatelessWidget {
     return CustomSignInListener(
       child: PopScope(
         canPop: false,
-        child: Scaffold(
-          backgroundColor: Colors.white,
-          body: SafeArea(
-            child: SingleChildScrollView(
-              child: Form(
-                key: viewModel.formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const CustomeTitleText(),
-                    CustomSignInInputFields(viewModel: viewModel),
-                    SizedBox(height: 120.h),
-                    Column(
-                      children: [
-                        BlocBuilder<SignInCubit, SignInState>(
-                          builder: (context, state) {
-                            return state.isLoading ||
-                                    state.isAlreadySignIn ||
-                                    state.isNotSignIn ||
-                                    state.isSuccessSignOut ||
-                                    state.isSuccessSignIn ||
-                                    state.isSuccessGetData
-                                ? const CircularProgressIndicator(
-                                    color: AppPallete.darkVividVioletColor,
-                                  )
-                                : CustomButton(
-                                    buttonText: 'Sign In',
-                                    onTapButton: () {
-                                      if (viewModel.formKey.currentState!
-                                          .validate()) {
-                                        context
-                                            .read<SignInCubit>()
-                                            .checkUesrSignin(
-                                              email: viewModel
-                                                  .emailController!.text,
-                                              password: viewModel
-                                                  .passwordController!.text,
-                                            );
-                                      }
+        child: Stack(
+          children: [
+            SvgPicture.asset(
+              'assets/images/sign_in_background.svg',
+              width: double.infinity,
+              height: double.infinity,
+              fit: BoxFit.cover,
+            ),
+            Scaffold(
+              backgroundColor: Colors.transparent,
+              body: SingleChildScrollView(
+                child: Form(
+                    key: viewModel.formKey,
+                    child: SizedBox(
+                      height: MediaQuery.of(context)
+                          .size
+                          .height, // Set the full height of the screen
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const CustomeTitleText(),
+                          Flexible(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20.w, vertical: 20.h),
+                              decoration: BoxDecoration(
+                                color: const Color(0xffE2F7F7),
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(50.w),
+                                  topRight: Radius.circular(50.w),
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 12.w, vertical: 20.h),
+                                    child: Text(
+                                      'Sign In',
+                                      style: TextStyle(
+                                        fontSize: 40.sp,
+                                        fontFamily: 'Roboto',
+                                        fontWeight: FontWeight.bold,
+                                        color: const Color(0xff1A998E),
+                                      ),
+                                    ),
+                                  ),
+                                  CustomSignInInputFields(viewModel: viewModel),
+                                  SizedBox(height: 60.h),
+                                  BlocBuilder<SignInCubit, SignInState>(
+                                    builder: (context, state) {
+                                      return state.isLoading ||
+                                              state.isAlreadySignIn ||
+                                              state.isNotSignIn ||
+                                              state.isSuccessSignOut ||
+                                              state.isSuccessSignIn ||
+                                              state.isSuccessGetData
+                                          ? const Center(
+                                            child: CircularProgressIndicator(
+                                                color: AppColor.teal
+                                                    ,
+                                              ),
+                                          )
+                                          : Padding(
+                                            padding:  EdgeInsets.symmetric(horizontal:  20.w),
+                                            child: Center(
+                                              child: CustomButton(
+                                                  buttonText: 'Sign In',
+                                                  onTapButton: () {
+                                                    if (viewModel
+                                                        .formKey.currentState!
+                                                        .validate()) {
+                                                      context
+                                                          .read<SignInCubit>()
+                                                          .checkUesrSignin(
+                                                            email: viewModel
+                                                                .emailController!
+                                                                .text,
+                                                            password: viewModel
+                                                                .passwordController!
+                                                                .text,
+                                                          );
+                                                    }
+                                                  },
+                                                ),
+                                            ),
+                                          );
                                     },
-                                  );
-                          },
-                        ),
-                        SizedBox(height: 10.h),
-                        CustomDontHaveAccountRow(
-                          onTap: () {
-                            Navigator.pushNamed(context, RouteNames.signUp);
-                          },
-                        ),
-                        SizedBox(height: 22.h),
-                        BlocBuilder<SignInCubit, SignInState>(
-                          builder: (context, state) {
-                            return state.isGoogleAuthLoading
-                                ? const CircularProgressIndicator(
-                                    color: AppPallete.darkVividVioletColor,
-                                  )
-                                : GoogleButton(onTapButton: () {
-                                    context.read<SignInCubit>().googleAuth();
-                                  });
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                                  ),
+                                  SizedBox(height: 22.h),
+                                  BlocBuilder<SignInCubit, SignInState>(
+                                    builder: (context, state) {
+                                      return state.isGoogleAuthLoading
+                                          ? const Center(
+                                            child: CircularProgressIndicator(
+                                                color: AppColor.teal,
+                                              ),
+                                          )
+                                          : Padding(
+                                            padding:  EdgeInsets.symmetric(horizontal:  30.w),
+                                            child: GoogleButton(
+                                                onTapButton: () {
+                                                  context
+                                                      .read<SignInCubit>()
+                                                      .googleAuth();
+                                                },
+                                              ),
+                                          );
+                                    },
+                                  ),
+                                  SizedBox(height: 10.h),
+                                  CustomDontHaveAccountRow(
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                          context, RouteNames.signUp);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );

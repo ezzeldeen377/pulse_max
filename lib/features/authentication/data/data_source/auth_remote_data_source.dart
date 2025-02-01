@@ -22,13 +22,11 @@ abstract interface class AuthRemoteDataSource {
 
 @Injectable(as: AuthRemoteDataSource)
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  final FirebaseFirestore firestore=FirebaseFirestore.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  
-
-  CollectionReference get _userCollection =>
-      firestore.collection('users');
+  CollectionReference get _userCollection => firestore.collection('users');
+  CollectionReference get _doctorCollection => firestore.collection('doctors');
   @override
   Future<UserCredential> signUp(
       {required String email,

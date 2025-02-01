@@ -21,7 +21,7 @@ class DoctorCard extends StatelessWidget {
               CircleAvatar(
                 backgroundColor: Colors.grey[400],
                 radius: 20,
-                child: const Icon(Icons.person, color: Colors.white),
+                backgroundImage: const AssetImage("assets/images/doctor_image.png"),
               ),
               const SizedBox(width: 10),
               const Column(

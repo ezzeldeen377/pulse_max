@@ -2,22 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:icons_plus/icons_plus.dart';
-import 'package:provider/provider.dart';
 import 'package:pulse_max/core/common/cubit/app_user/app_user_cubit.dart';
-import 'package:pulse_max/core/common/entities/user_model.dart';
 import 'package:pulse_max/core/routes/routes.dart';
+import 'package:pulse_max/core/theme/app_pallete.dart';
 import 'package:pulse_max/core/utils/show_snack_bar.dart';
 import 'package:pulse_max/features/doctor/data/models/appointment_model.dart';
+
 import 'package:pulse_max/features/doctor/data/models/doctor.dart';
-import 'package:pulse_max/features/doctor/presentation/providers/doctors_cubit.dart';
-import 'package:pulse_max/features/doctor/presentation/providers/doctors_state.dart';
+import 'package:pulse_max/features/doctor/presentation/bloc/doctors/doctors_cubit.dart';
+import 'package:pulse_max/features/doctor/presentation/bloc/doctors/doctors_state.dart';
 import 'package:pulse_max/features/doctor/presentation/widgets/show_time_picker_bottom_sheet.dart';
 import 'package:pulse_max/features/message/data/models/chat_model.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-class DoctorDetailsScreen extends StatefulWidget {
-  static const routeName = '/doctor_details';
+class DoctorDetailsScreen extends StatelessWidget {
   final DoctorModel doctor;
   const DoctorDetailsScreen({
     super.key,
@@ -25,226 +22,214 @@ class DoctorDetailsScreen extends StatefulWidget {
   });
 
   @override
-  State<DoctorDetailsScreen> createState() => _DoctorDetailsScreenState();
-}
-
-class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
-  double startSize = 40;
-  double endSize = 100;
-  double currentSize = 100;
-  double startFontSize = 60;
-  double endFontSize = 16;
-  double currentFontSize = 60;
-  Alignment currentAlignment = Alignment.center;
-  late DoctorModel doctor;
-  late UserModel localUser;
-
-  @override
-  void initState() {
-    super.initState();
-    doctor = widget.doctor;
-    _initializeUserData();
-  }
-
-  Future<void> _initializeUserData() async {
-    localUser = context.read<AppUserCubit>().state.user!;
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final localUser = context.read<AppUserCubit>().state.user;
     return BlocListener<DoctorsCubit, DoctorsState>(
       listener: (context, state) {
-        if (state.isPicked) {
+  if (state.isPicked) {
           showCustomDialog(context, 'Appointment Booked', () {
             Navigator.pop(context);
           });
-        }
-      },
+        }      },
       child: Scaffold(
-        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        floatingActionButton: Align(
-          alignment: Alignment.bottomRight, // Position at bottom-end
-          child: Column(
-            mainAxisSize: MainAxisSize.min, // Prevent full column height
-            children: [
-              SizedBox(
-                width: 150.w,
-                child: FloatingActionButton.extended(
-                  heroTag: "book_appointment", // Unique tag
-
-                  onPressed: () async {
-                    final selectedTime =
-                        await showTimePickerBottomSheet(context);
-                    if (selectedTime != null) {
-                      context.read<DoctorsCubit>().createAppointment(
-                          AppointmentModel(
-                              createdAt: DateTime.now(),
-                              date: selectedTime,
-                              doctorId: doctor.uid,
-                              userId: localUser.uid,
-                              status: 'pending'));
-                    }
-                  },
-                  icon: const Icon(
-                      FontAwesome.calculator_solid), // FontAwesome icon
-                  label: const Text('Appointment'),
-                  backgroundColor: Colors.blue, // Color for this button
-                ),
-              ),
-              const SizedBox(height: 10), // Space between buttons
-              SizedBox(
-                width: 150.w,
-                child: FloatingActionButton.extended(
-                  heroTag: "chat_now", // Unique tag
-
-                  onPressed: () async {
-                    final chat = ChatModel(
-                      senderId: localUser.uid,
-                      senderName: localUser.name,
-                      senderProfilePicture: localUser.profileImage,
-                      receiverId: doctor.uid,
-                      receiverName: doctor.name,
-                      receiverProfilePicture: doctor.profileImage,
-                    );
-                    final result =
-                        await context.read<DoctorsCubit>().startChat(chat);
-                    if (result != null) {
-                      Navigator.pushNamed(context, RouteNames.chatScreen,
-                          arguments: result);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Something went wrong')),
-                      );
-                    }
-                  },
-                  icon:
-                      const Icon(FontAwesome.message_solid), // FontAwesome icon
-                  label: const Text('Chat Now'),
-                  backgroundColor: Colors.green, // Color for this button
-                ),
-              ),
-            ],
-          ),
-        ),
+       
+        backgroundColor : Colors.grey[100],
         appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Text(doctor.name ?? ''),
+          backgroundColor: AppColor.lightTeal,
+          title: const Text('Doctor Details'),centerTitle: true,
+
         ),
-        body: NotificationListener<UserScrollNotification>(
-          onNotification: (notification) {
-            if (notification.direction == ScrollDirection.forward) {
-              setState(() {
-                // reduce current size
-                currentSize = endSize;
-                currentFontSize = startFontSize;
-                currentAlignment = Alignment.topCenter;
-              });
-            } else if (notification.direction == ScrollDirection.reverse) {
-              setState(() {
-                // increase current size
-                currentSize = startSize;
-                currentFontSize = endFontSize;
-                currentAlignment = Alignment.topRight;
-              });
-            }
-            return true;
-          },
-          child: Column(
-            children: [
-              AnimatedAlign(
-                duration: const Duration(milliseconds: 300),
-                alignment: currentAlignment,
-                curve: Curves.fastOutSlowIn,
-                child: Hero(
-                  tag: doctor.uid ?? "",
-                  child: AnimatedSize(
-                    duration: const Duration(milliseconds: 300),
-                    child: CircleAvatar(
-                      radius: currentSize,
-                      backgroundImage: NetworkImage(doctor.profileImage ?? ""),
-                      child: AnimatedSize(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                        child: AnimatedDefaultTextStyle(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                          style:
-                              Theme.of(context).textTheme.titleLarge!.copyWith(
-                                    color: Colors.white,
-                                    fontSize: currentFontSize,
-                                  ),
-                          child: Container(),
-                        ),
-                      ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center, // Align items to the top
+                  children: [
+                    const CircleAvatar(
+            radius: 60,
+            backgroundImage: AssetImage('assets/images/doctor_image.png'),
                     ),
+                    const SizedBox(width: 16),
+                    Expanded( // Allow the column to take available space
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min, // Prevent unnecessary expansion
+              children: [
+                Text(
+                  "Dr ${doctor.name}",
+                  style: const TextStyle(
+                    fontSize: 20, fontWeight: FontWeight.bold, color: AppColor.teal,
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Expanded(
-                child: ListView(
-                  children: [
-                    ListTile(
-                      title: const Text('Name'),
-                      subtitle: Text(
-                        doctor.name ?? '',
-                      ),
-                      trailing: const Icon(Icons.person),
+                Text(
+                  doctor.specialization ?? '',
+                  style: const TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+                Text(
+                  doctor.qualification ?? '',
+                  style: const TextStyle(color: Colors.grey),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1, // Ensures the text truncates if it overflows
+                ),
+              ],
+            ),
                     ),
-                    ListTile(
-                      title: const Text('Gender'),
-                      subtitle: Text(doctor.gender ?? ''),
-                      trailing: doctor.gender == Gender.male
-                          ? const Icon(FontAwesome.person_solid)
-                          : const Icon(FontAwesome.person_dress_solid),
-                    ),
-                    ListTile(
-                      title: const Text('Email'),
-                      subtitle: Text(
-                        doctor.email ?? "",
-                      ),
-                      trailing: const Icon(FontAwesome.envelope_solid),
-                      onTap: () async {
-                        final Uri emailLaunchUri =
-                            Uri.parse("mailto:${doctor.email}");
-
-                        if (!await launchUrl(emailLaunchUri)) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('could_not_launch'),
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                    ListTile(
-                      title: const Text('Phone'),
-                      subtitle: Text(doctor.phoneNumber ?? ''),
-                      trailing: const Icon(FontAwesome.phone_flip_solid),
-                      onTap: () async {
-                        final Uri phoneLaunchUri = Uri.parse(
-                          'tel:${doctor.phoneNumber}',
-                        );
-
-                        if (!await launchUrl(phoneLaunchUri)) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('could_not_launch'),
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                    // const Divider(),
                   ],
                 ),
-              ),
-            ],
+                const SizedBox(height: 20),
+                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const StatItem(
+                        count: '100+', label: 'Patients', icon: Icons.person),
+                    const StatItem(
+                        count: '100+', label: 'Years Exp', icon: Icons.work),
+                    // StatItem(count: '10+', label: 'Years Exp.', icon: Icons.work),
+                    StatItem(count: doctor.rating==null ? 'no rated' : doctor.rating!.toStringAsFixed(1), label: 'Rating', icon: Icons.star),
+                    const StatItem(
+                        count: '50+', label: 'Reviews', icon: Icons.comment),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                const Text('About',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                 Text(
+                  doctor.bio??" no bio for this doctor added yet ",
+                  style: TextStyle(fontSize: 16.sp, color: Colors.grey),
+                ),
+                const SizedBox(height: 20),
+                const Text('Working Hours',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const WorkingHoursWidget(),
+                const Spacer(),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        label: const Text('Chat Now'),
+                        
+                        onPressed: () async {
+                          final chat = ChatModel(
+                            senderId: localUser?.uid,
+                            senderName: localUser?.name,
+                            senderProfilePicture: localUser?.profileImage,
+                            receiverId: doctor.uid,
+                            receiverName: doctor.name,
+                            receiverProfilePicture: doctor.profileImage,
+                          );
+                          final result =
+                              await context.read<DoctorsCubit>().startChat(chat);
+                          if (result != null) {
+                            Navigator.pushNamed(context, RouteNames.chatScreen,
+                                arguments: result);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text('Something went wrong')),
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColor.teal,
+                          foregroundColor: Colors.white,
+                        ),
+                        icon: const Icon(Icons.chat,color :Colors.white),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        label: const Text('Book Appointment'),
+                        onPressed: () async {
+                          final selectedTime =
+                              await showTimePickerBottomSheet(context);
+                          if (selectedTime != null) {
+                            context.read<DoctorsCubit>().createAppointment(
+                                AppointmentModel(
+                                    createdAt: DateTime.now(),
+                                    date: selectedTime,
+                                    doctorId: doctor.uid,
+                                    userId: localUser?.uid,
+                                    status: 'pending'));
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                             backgroundColor: AppColor.teal,
+                          foregroundColor: Colors.white,
+                        ),
+                        icon: const Icon(Icons.calendar_month,color:Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class StatItem extends StatelessWidget {
+  final String count;
+  final String label;
+  final IconData icon;
+  const StatItem({super.key, required this.count, required this.label, required this.icon});
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        CircleAvatar(
+          radius: 30,
+          backgroundColor: AppColor.lightTeal,
+          child: Icon(icon, color:AppColor.teal, size: 30),
+        ),
+        const SizedBox(height: 8),
+        Text(count,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: AppColor.teal)),
+        Text(label,style: const TextStyle(color:Colors.grey),),
+      ],
+    );
+  }
+}
+
+class WorkingHoursWidget extends StatelessWidget {
+  const WorkingHoursWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          WorkingHourItem(day: 'Monday', hours: '10:00 - 15:00'),
+          WorkingHourItem(day: 'Tuesday', hours: '12:00 - 17:00'),
+          WorkingHourItem(day: 'Wednesday', hours: '08:00 - 13:00'),
+          WorkingHourItem(day: 'Thursday', hours: '15:00 - 20:00'),
+          WorkingHourItem(day: 'Friday', hours: '09:00 - 14:00'),
+          WorkingHourItem(day: 'Saturday', hours: '11:00 - 16:00'),
+        ],
+      ),
+    );
+  }
+}
+
+class WorkingHourItem extends StatelessWidget {
+  final String day;
+  final String hours;
+  const WorkingHourItem({super.key, required this.day, required this.hours});
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(day, style: const TextStyle(fontSize: 16)),
+        Text(hours, style: const TextStyle(color: Colors.grey)),
+      ],
     );
   }
 }

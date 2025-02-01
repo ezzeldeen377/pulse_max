@@ -11,15 +11,15 @@ class CustomeTitleText extends StatelessWidget {
       padding:
           EdgeInsets.only(top: 148.h, bottom: 65.h, left: 35.w, right: 35.w),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Let’s Sign You In',
-            style: TextStyles.font32BlackColormedium
-                .copyWith(fontWeight: FontWeight.w700),
+            'Hello',
+            style: TextStyle(fontSize: 50.sp,fontFamily: 'Roboto',fontWeight: FontWeight.bold,color: Colors.white),
           ),
           Text(
-            'Welcome back, you’ve been missed!',
-            style: TextStyles.font14BlackColorMedium,
+            'Welcome To Pulse Max',
+            style: TextStyle(fontSize: 16.sp,fontFamily: 'Roboto',fontWeight: FontWeight.bold,color: Colors.white),
           ),
         ],
       ),

@@ -11,6 +11,8 @@ abstract class MessageRemoteDataSource {
   Stream<List<Map<String, dynamic>>> getUserChats(String uid) ;
   Future<List<types.Message>> getAllMessages();
   Stream<List<types.Message>> listOnChatMessages( String chatId);
+    Future<Unit> deleteChat(String chatId);
+
 }
 
 @Injectable(as: MessageRemoteDataSource)
@@ -40,32 +42,38 @@ class MessageRemoteDataSourceImpl implements MessageRemoteDataSource {
 Stream<List<Map<String, dynamic>>> getUserChats(String uid) {
   // Query for chats where the user is the sender
   final senderChatsStream = chatCollection
-      .where('senderId', isEqualTo: uid)
+      .where('senderId', isEqualTo: uid).orderBy('lastMessageTime', descending: true) // Sort newest first
+
       .snapshots();
 
   // Query for chats where the user is the receiver
   final receiverChatsStream = chatCollection
-      .where('receiverId', isEqualTo: uid)
+      .where('receiverId', isEqualTo: uid)    .orderBy('lastMessageTime', descending: true) // Sort newest first
+
       .snapshots();
 
   // Combine both streams
-  return  Rx.combineLatest2(
-    senderChatsStream,
-    receiverChatsStream,
-    (QuerySnapshot senderSnapshot, QuerySnapshot receiverSnapshot) {
-      final senderChats = senderSnapshot.docs;
-      final receiverChats = receiverSnapshot.docs;
+  return Rx.combineLatest2(
+  senderChatsStream,
+  receiverChatsStream,
+  (QuerySnapshot senderSnapshot, QuerySnapshot receiverSnapshot) {
+    final senderChats = senderSnapshot.docs;
+    final receiverChats = receiverSnapshot.docs;
 
-      // Combine the results
-      final allChats = [...senderChats, ...receiverChats];
+    // Combine both sender and receiver chat documents
+    final allChats = [...senderChats, ...receiverChats];
 
-      // Remove duplicates based on the document ID
-      final uniqueChats = allChats.toSet();
+    // Use a map to remove duplicates based on document ID
+    final Map<String, Map<String, dynamic>> uniqueChatsMap = {};
 
-      // Map the documents to a list of maps
-      return uniqueChats.map((doc) => doc.data() as Map<String, dynamic>).toList();
-    },
-  );
+    for (var doc in allChats) {
+      uniqueChatsMap[doc.id] = doc.data() as Map<String, dynamic>;
+    }
+
+    // Convert map values to a list (only unique chats remain)
+    return uniqueChatsMap.values.toList();
+  },
+);
 }
 
   @override
@@ -103,5 +111,12 @@ rethrow;
     }
   });
 }
+
+  @override
+  Future<Unit> deleteChat(String chatId) async {
+   final docRef=  chatCollection.doc(chatId);
+  await docRef.delete();
+    return Future.value(unit);
+  }
 
 }

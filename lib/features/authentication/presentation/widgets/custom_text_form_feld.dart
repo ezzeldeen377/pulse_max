@@ -27,25 +27,27 @@ class CustomTextFormFeld extends StatelessWidget {
     return TextFormField(
           controller: controller,
           style:TextStyles.font17RobotoAccentBlackColor2Regular,
-          cursorColor: AppPallete.darkVividVioletColor,
+          cursorColor: AppColor.teal,
           validator: validator,
           keyboardType:keyboardType ,
           obscureText: obscureText,
           decoration: InputDecoration(
-            hintText: hintText,
-            hintStyle: TextStyles.font17RobotoAccentBlackColor2Regular,
+             filled: true,
+            fillColor: Colors.white,
+            label:Text(hintText??''),
+            labelStyle: TextStyles.font17RobotoAccentBlackColor2Regular,
             suffixIcon: suffixIcon,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14.78.r),
-              borderSide: const BorderSide(width: 2.46, color: AppPallete.mediumGrayColor),
+              borderRadius: BorderRadius.circular(16.r),
+              borderSide: const BorderSide(width: 0, color: AppPallete.mediumGrayColor),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14.78.r),
-              borderSide: const BorderSide(width: 2.46, color: AppPallete.mediumGrayColor),
+              borderRadius: BorderRadius.circular(16.r),
+              borderSide: const BorderSide(width: 0, color: AppPallete.mediumGrayColor),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14.78.r),
-              borderSide: const BorderSide(width: 2.46, color: AppPallete.darkVividVioletColor),
+              borderRadius: BorderRadius.circular(16.r),
+              borderSide: const BorderSide(width: 1, color: AppColor.teal),
             ),
             )
          );

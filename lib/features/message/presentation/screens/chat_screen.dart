@@ -8,8 +8,8 @@ import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
-import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pulse_max/core/theme/app_pallete.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:pulse_max/core/common/cubit/app_user/app_user_cubit.dart';
@@ -190,7 +190,6 @@ class _ChatScreenState extends State<ChatScreen> {
         }
       }
 
-      await OpenFilex.open(localPath);
     }
   }
 
@@ -223,12 +222,13 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppColor.lightTeal,
         title: Row(
           children: [
             CircleAvatar(
               backgroundImage: NetworkImage(_user.id == widget.chat.senderId
                   ? widget.chat.receiverProfilePicture ?? ''
-                  : widget.chat.senderId ?? ''),
+                  : widget.chat.senderProfilePicture ?? ''),
               // child: Image.network(widget.doctor.imageUrl),
             ),
             const SizedBox(
@@ -257,7 +257,7 @@ class _ChatScreenState extends State<ChatScreen> {
       body: BlocBuilder<ChatsCubit, ChatsState>(
         builder: (context, state) {
           return _user != null
-              ? Chat(
+              ? Chat( 
                   messages: state.messages ?? [],
                   onAttachmentPressed: _handleAttachmentPressed,
                   onMessageTap: _handleMessageTap,
@@ -265,7 +265,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   onSendPressed: _handleSendPressed,
                   showUserAvatars: true,
                   showUserNames: true,
-                  user: _user,
+                  user: _user,inputOptions: InputOptions(
+                    
+                  ),
+                  
                 )
               : Center(
                   child: CircularProgressIndicator(),

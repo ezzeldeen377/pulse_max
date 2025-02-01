@@ -6,7 +6,7 @@ import 'package:pulse_max/features/doctor/data/models/appointment_model.dart';
 import 'package:pulse_max/features/doctor/data/models/doctor.dart';
 
 abstract class DoctorRemoteDataSource {
-  Future<List<Map<String, dynamic>>?> getDoctorList();
+  Future<List<Map<String, dynamic>>?> getDoctorList(String? category);
   Future<Unit> createDoctor(DoctorModel doctor);
   Future<Unit> updateDoctor(DoctorModel doctor);
   Future<Unit> deleteDoctor(DoctorModel doctor);
@@ -22,9 +22,7 @@ class DoctorRemoteDataSourceImpl extends DoctorRemoteDataSource {
   
   @override
   Future<Unit> createDoctor(DoctorModel doctor) async {
-     var docRef =  doctorCollection.doc();
-     doctor.uid=docRef.id;
-     await docRef.set(doctor.toMap());
+     await doctorCollection.doc(doctor.uid).set(doctor.toMap());
      return Future.value(unit);
     
   }
@@ -38,7 +36,12 @@ class DoctorRemoteDataSourceImpl extends DoctorRemoteDataSource {
   }
   
   @override
-  Future<List<Map<String, dynamic>>?> getDoctorList() async {
+  Future<List<Map<String, dynamic>>?> getDoctorList(String? category) async {
+    if(category!=null){
+         var querySnapshot  =await doctorCollection.where('specialization',isEqualTo: category).get();
+   return querySnapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+
+    }
    var querySnapshot  =await doctorCollection.get();
 
    return querySnapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();

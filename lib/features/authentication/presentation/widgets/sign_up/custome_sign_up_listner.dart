@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:pulse_max/features/authentication/presentation/screens/sign_in_screen.dart';
+import 'package:pulse_max/core/routes/routes.dart';
 import '../../../../../core/utils/show_snack_bar.dart';
 import '../../cubits/sign_up_cubit/sign_up_cubit.dart';
 import '../../cubits/sign_up_cubit/sign_up_state.dart';
@@ -19,7 +18,6 @@ class CustomeSignUpListner extends StatelessWidget {
           showSnackBar(context, state.erorrMessage ?? "");
         } else if (state.isSuccess) {
           cubit.setData(userModel: state.userModel!);
-
         } else if (state.isFailureSaveData) {
           state.erorrMessage;
           cubit.deleteUser(uid: state.userModel?.uid ?? "");
@@ -30,7 +28,7 @@ class CustomeSignUpListner extends StatelessWidget {
           showCustomDialog(context,
               "your account has been created successfully, please verify your email",
               () {
-            context.pushReplacementNamed(SignInScreen.routeName);
+            Navigator.pushReplacementNamed(context, RouteNames.signIn);
           });
         } else if (state.isSuccessDeleteUser) {
           showSnackBar(context, "delete data Successfully");

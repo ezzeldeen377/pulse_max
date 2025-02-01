@@ -36,11 +36,11 @@ class CustomeUpperText extends StatelessWidget {
           ),
           Text(
             "Getting Started",
-            style: TextStyles.fontRoboto24BoldBlack,
+            style:  TextStyle(fontSize: 24.sp,fontFamily: 'Roboto',fontWeight: FontWeight.bold,color: Colors.white),
           ),
           Text(
             "Create an account to continue!",
-            style: TextStyles.font14BlackColorMedium,
+            style:  TextStyle(fontSize: 16.sp,fontFamily: 'Roboto',fontWeight: FontWeight.bold,color: Colors.white),
           ),
         ],
       ),

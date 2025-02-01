@@ -23,13 +23,10 @@ class CustomeSignUpInputFields extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Email",
-            style: TextStyles.font17RobotoAccentBlackColor2Regular,
-          ),
+      
           CustomTextFormFeld(
             validator: emailValidator,
-            hintText: "Enter your email",
+            hintText: "Email",
             keyboardType: TextInputType.emailAddress,
             suffixIcon: const Icon(
               Icons.email_outlined,
@@ -40,10 +37,7 @@ class CustomeSignUpInputFields extends StatelessWidget {
           SizedBox(
             height: 15.h,
           ),
-          Text(
-            "Username",
-            style: TextStyles.font17RobotoAccentBlackColor2Regular,
-          ),
+         
           CustomTextFormFeld(
             validator: (String? value) {
               if (value == null || value.trim().isEmpty) {
@@ -51,7 +45,7 @@ class CustomeSignUpInputFields extends StatelessWidget {
               }
               return null;
             },
-            hintText: "Enter your Username",
+            hintText: "Username",
             keyboardType: TextInputType.emailAddress,
             suffixIcon: const Icon(
               Icons.person,
@@ -62,15 +56,12 @@ class CustomeSignUpInputFields extends StatelessWidget {
           SizedBox(
             height: 15.h,
           ),
-          Text(
-            "Pawssword",
-            style: TextStyles.font17RobotoAccentBlackColor2Regular,
-          ),
+          
           BlocBuilder<SignUpCubit, SignUpState>(
             builder: (context, state) {
               return CustomTextFormFeld(
                 validator: passwordValidator,
-                hintText: "Enter your password",
+                hintText: "Password",
                 obscureText: state.isVisiblePassword,
                 keyboardType: TextInputType.visiblePassword,
                 suffixIcon: IconButton(
@@ -91,10 +82,7 @@ class CustomeSignUpInputFields extends StatelessWidget {
           SizedBox(
             height: 15.h,
           ),
-          Text(
-            "Confirm Password",
-            style: TextStyles.font17RobotoAccentBlackColor2Regular,
-          ),
+     
           BlocBuilder<SignUpCubit, SignUpState>(
             builder: (context, state) {
               return CustomTextFormFeld(
@@ -106,7 +94,7 @@ class CustomeSignUpInputFields extends StatelessWidget {
                   }
                   return null;
                 },
-                hintText: "Enter your Confirm Password",
+                hintText: "Confirm Password",
                 keyboardType: TextInputType.visiblePassword,
                 obscureText: state.isVisiblePasswordConfirm,
                 suffixIcon: IconButton(

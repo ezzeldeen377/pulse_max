@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:pulse_max/features/doctor/data/models/doctor.dart';
 
 class UserModel {
    String? uid;
@@ -29,6 +30,18 @@ class UserModel {
       createdAt: createdAt!.millisecondsSinceEpoch,
       firstName: name,
       imageUrl: profileImage,
+    );
+  }
+  DoctorModel asDoctor(){
+    return DoctorModel(
+    uid: uid ?? uid,
+      email: email ?? email,
+      name: name ?? name,
+      createdAt: createdAt ?? createdAt,
+      gender: gender ?? gender,
+      type: type ?? type,
+      profileImage: profileImage ?? profileImage,
+      phoneNumber: phoneNumber ?? phoneNumber,
     );
   }
   UserModel copyWith({

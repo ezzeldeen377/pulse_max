@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pulse_max/core/common/cubit/app_user/app_user_cubit.dart';
 import 'package:pulse_max/core/di/di.dart';
-import 'package:pulse_max/core/screens/home_screen/home_screen.dart';
+import 'package:pulse_max/features/home/presentation/pages/home_screen.dart';
+import 'package:pulse_max/features/doctor/presentation/screens/edit_doctor_details.dart';
+import 'package:pulse_max/features/measurement/presentation/pages/measurement_page.dart';
 import 'package:pulse_max/features/message/presentation/cubits/chats_cubit.dart';
 import 'package:pulse_max/features/message/presentation/screens/user_chats_screen.dart';
+import 'package:pulse_max/features/profile/presentation/pages/profile_page.dart';
 
 class InitialScreen extends StatefulWidget {
   const InitialScreen({super.key});
@@ -26,8 +29,8 @@ class _InitialScreenState extends State<InitialScreen> {
         ..getChats(context.read<AppUserCubit>().state.user!.uid!),
       child: const UserChatsScreen(),
     ),
-    const Center(child: Text('Favorites Page', style: TextStyle(fontSize: 24))),
-    const Center(child: Text('Profile Page', style: TextStyle(fontSize: 24))),
+    const MeasurementPage(),
+     ProfilePage(),
   ];
 
   @override
@@ -43,6 +46,8 @@ class _InitialScreenState extends State<InitialScreen> {
         children: _pages,
       ),
       bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: Colors.teal,backgroundColor:  Colors.grey[100],
+        
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
@@ -62,11 +67,11 @@ class _InitialScreenState extends State<InitialScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),
-            label: 'chats',
+            label: 'Chats',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
-            label: 'Favorites',
+            label: 'Measurement',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

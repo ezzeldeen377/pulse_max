@@ -62,3 +62,17 @@ class AppPallete {
   static const Color lightpinkColor = Color(0xffFFDDDD);
   static const Color lightVioletColor = Color(0xffF5F6F6);
 }
+
+class AppColor {
+  static const Color primaryColor = Color(0xFF1A73E8); // Blue for buttons
+  static const Color primaryTextColor =
+      Color(0xFF333333); // Dark gray for main text
+  static const Color secondaryTextColor =
+      Color(0xFF757575); // Gray for secondary text
+  static const Color backgroundColor =
+      Color(0xFFFFFFFF); // Light gray for background
+  static const Color borderColor = Color(0xFFE0E0E0);
+  static const Color lightBlue = Color(0xFFdbeaff);
+  static const Color teal = Color(0xFF1A998E);
+  static const Color lightTeal = Color(0xFFE2F7F7);
+}

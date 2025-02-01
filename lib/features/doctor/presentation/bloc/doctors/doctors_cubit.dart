@@ -8,11 +8,10 @@ import 'package:pulse_max/features/doctor/domain/usecases/create_doctor.dart';
 import 'package:pulse_max/features/doctor/domain/usecases/get_doctors.dart';
 import 'package:pulse_max/features/doctor/domain/usecases/start_chat_with_doctor.dart';
 import 'package:pulse_max/features/doctor/domain/usecases/update_doctor.dart';
-import 'package:pulse_max/features/doctor/presentation/providers/doctors_state.dart';
+import 'package:pulse_max/features/doctor/presentation/bloc/doctors/doctors_state.dart';
 import 'package:pulse_max/features/message/data/models/chat_model.dart';
 
-
-@lazySingleton
+@injectable
 class DoctorsCubit extends Cubit<DoctorsState> {
   final GetDoctors getDoctors;
   final UpdateDoctor updateDoctor;
@@ -20,49 +19,49 @@ class DoctorsCubit extends Cubit<DoctorsState> {
   final StartChatWithDoctor startChatWithDoctor;
   final DoctorRepository repository;
 
-  DoctorsCubit({
-    required this.getDoctors,
-    required this.updateDoctor,
-    required this.createDoctor,
-    required this.startChatWithDoctor,
-    required this.repository
-  }) : super(DoctorsState(status: DoctorsStatus.initial));
+  DoctorsCubit(
+      {required this.getDoctors,
+      required this.updateDoctor,
+      required this.createDoctor,
+      required this.startChatWithDoctor,
+      required this.repository})
+      : super(DoctorsState(status: DoctorsStatus.initial));
 
-  Future<void> getDoctorss() async {
+  Future<void> getDoctorss(String? category) async {
     emit(state.copyWith(status: DoctorsStatus.loading));
-    final result = await getDoctors.call();
-    result.fold((l) => emit(state.copyWith(status: DoctorsStatus.error,)), (r) => emit(state.copyWith(status: DoctorsStatus.success, doctors: r)));
-
+    final result = await getDoctors.call(category);
+    result.fold(
+        (l) => emit(state.copyWith(
+              status: DoctorsStatus.error,
+            )),
+        (r) => emit(state.copyWith(status: DoctorsStatus.success, doctors: r,category: category)));
   }
-
 
   create(DoctorModel doctor) async {
     final failureOrUnit = await createDoctor(doctor);
     failureOrUnit.fold((failure) {}, (_) {
-      emit(state.copyWith(status: DoctorsStatus.success,doctors: [...state.doctors!, doctor]));
+      emit(state.copyWith(
+          status: DoctorsStatus.success,   ));
     });
-
   }
 
   update(DoctorModel doctor) async {
     await updateDoctor(doctor);
   }
 
-  Future<ChatModel?> startChat(ChatModel chat) async{
+  Future<ChatModel?> startChat(ChatModel chat) async {
     final response = await startChatWithDoctor(chat);
-    return response.fold((l) =>null, (r) => r); 
+    return response.fold((l) => null, (r) => r);
   }
-createAppointment(AppointmentModel app) async {
+
+  createAppointment(AppointmentModel app) async {
     final failureOrUnit = await repository.createAppointment(app);
     failureOrUnit.fold((failure) {
-            emit(state.copyWith(status: DoctorsStatus.error));
-
+      emit(state.copyWith(status: DoctorsStatus.error));
     }, (_) {
-      emit(state.copyWith(status: DoctorsStatus.picked,));
+      emit(state.copyWith(
+        status: DoctorsStatus.picked,
+      ));
     });
-
   }
-  
 }
-
-

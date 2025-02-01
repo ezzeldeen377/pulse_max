@@ -91,6 +91,18 @@ class ChatsCubit extends Cubit<ChatsState> {
           status: ChatsStatus.error, errorMessage: e.toString()));
     }
   }
+   void deleteChat( String chatId) async {
+    try {
+      final response = await messageRepository.deleteChat( chatId);
+      response.fold(
+        (l) => emit(state.copyWith(status: ChatsStatus.error, errorMessage: l)),
+        (r) => emit(state.copyWith(status: ChatsStatus.success)),
+      );
+    } catch (e) {
+      emit(state.copyWith(
+          status: ChatsStatus.error, errorMessage: e.toString()));
+    }
+  }
 
   @override
   Future<void> close() {

@@ -53,10 +53,10 @@ class CustomMainBlocConsumer extends StatelessWidget {
 
   Widget _buildHomeWidget(AppUserState state, AppUserCubit appUserCubit) {
     if (state.isInitial()) {
-      return const Scaffold(backgroundColor: AppPallete.whiteColor,body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(backgroundColor: AppPallete.whiteColor,body: Center(child: CircularProgressIndicator(color: AppColor.teal,)));
     }
     if (state.isNotInstalled()) {
-      return const OnBoardingScreen();
+      return const OnboardingScreen();
     }
     if (state.isLoggedIn() || state.isGettedData() || state.isSuccess()) {
       return const InitialScreen();
@@ -67,6 +67,6 @@ class CustomMainBlocConsumer extends StatelessWidget {
         child: const SignInScreen(),
       );
     }
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(body: Center(child: CircularProgressIndicator(color: AppColor.teal,)));
   }
 }
