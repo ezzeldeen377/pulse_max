@@ -1,10 +1,10 @@
-import 'dart:async';
-import 'dart:math';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:pulse_max/core/helpers/notification_service.dart';
 import 'package:pulse_max/core/theme/app_pallete.dart';
+import 'package:pulse_max/features/measurement/presentation/cubit/measurement_cubit.dart';
 
 class MeasurementPage extends StatefulWidget {
   const MeasurementPage({super.key});
@@ -14,49 +14,20 @@ class MeasurementPage extends StatefulWidget {
 }
 
 class _MeasurementPage extends State<MeasurementPage> {
-  final Random _random = Random();
-  late Timer _timer;
+ 
 
-  int tpm = 0;
-  int temperature = 0;
-
+  final Color primaryColor = const Color(0xFF1A998E);
   final List<FlSpot> _graphData = [];
   int _timeCounter = 0;
-
-  // Define the primary color
-  final Color primaryColor = const Color(0xFF1A998E);
 
   @override
   void initState() {
     super.initState();
     _graphData.add(const FlSpot(0, 0)); // Ensure it's never empty
-    _startUpdatingData();
+    context.read<MeasurementCubit>().startMeasuring();
   }
 
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
-  }
 
-  void _startUpdatingData() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        // Generate random values
-        tpm = 60 + _random.nextInt(61); // Random TPM between 60 and 120
-        temperature = 34 + _random.nextInt(7); // Random temperature between 34 and 40
-
-        // Update graph data
-        _graphData.add(FlSpot(_timeCounter.toDouble(), tpm.toDouble()));
-        _timeCounter++;
-
-        // Keep only the latest 20 points
-        if (_graphData.length > 20) {
-          _graphData.removeAt(0); // Remove the oldest value
-        }
-      });
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,17 +41,44 @@ class _MeasurementPage extends State<MeasurementPage> {
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.black),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+      body: BlocBuilder<MeasurementCubit, MeasurementState>(
+        builder: (context, state) {
+          if (state.status.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state.status.isError) {
+            return Center(child: Text(state.errorMessage ?? 'An error occurred'));
+          }
+
+          if (state.status.isSuccess && state.measurement != null) {
+            final measurement = state.measurement!;
+            
+            // Update graph data
+            _graphData.add(FlSpot(_timeCounter.toDouble(), measurement.pulse.toDouble()));
+            _timeCounter++;
+
+            // Keep only the latest 20 points
+            if (_graphData.length > 20) {
+              _graphData.removeAt(0);
+            }
+
+            // Show notification if pulse is 100 or higher
+            if (measurement.pulse >= 100) {
+              NotificationService.dangerAlert(measurement.pulse);
+            }
+
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Real-time data display
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildDataCard('Pulse', tpm.toString(), Icons.favorite, 'bpm'),
-                _buildDataCard('Temperature', '$temperature °C', Icons.thermostat, '°c'),
+                _buildDataCard('Pulse', measurement.pulse.toString(), Icons.favorite, 'bpm'),
+                      _buildDataCard('Temperature', '${measurement.temperature} °C', Icons.thermostat, '°c'),
               ],
             ),
             const SizedBox(height: 24),
@@ -211,8 +209,13 @@ class _MeasurementPage extends State<MeasurementPage> {
                 ),
               ),
             ),
-          ],
-        ),
+                ],
+              ),
+            );
+          }
+
+          return const Center(child: Text('Start measuring...'));
+        },
       ),
     );
   }

@@ -53,16 +53,7 @@ class DoctorModel extends UserModel {
         min: 100,
       )),
       phoneNumber: faker.phoneNumber.us(),
-      specialization: faker.randomGenerator.element([
-        
-        "General",
-        "Neurology",
-        "Nutrition",
-        "Dentist",
-        "Pediatric",
-        "Radiology",
-        "Ophthalmology"
-      ]),
+      specialization: 'Cardiologist',
       qualification: faker.guid.guid(),
       licenseNumber: faker.guid.guid(),
       hospitalOrClinicName: faker.company.name(),

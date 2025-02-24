@@ -1,0 +1,14 @@
+targets:
+  $default:
+    builders:
+      injectable_generator|injectable_builder:
+        options:
+          auto_register: true
+          # Reduce memory usage by limiting the number of concurrent operations
+          concurrent_async_operations: 4
+          # Enable garbage collection during build
+          enable_gc_during_build: true
+      source_gen|combining_builder:
+        options:
+          # Reduce buffer size to minimize memory usage
+          buffer_size: 64

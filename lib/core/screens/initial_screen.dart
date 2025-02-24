@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pulse_max/core/common/cubit/app_user/app_user_cubit.dart';
 import 'package:pulse_max/core/di/di.dart';
+import 'package:pulse_max/core/routes/routes.dart';
+import 'package:pulse_max/core/utils/custom_floating_action_button.dart';
 import 'package:pulse_max/features/home/presentation/pages/home_screen.dart';
 import 'package:pulse_max/features/doctor/presentation/screens/edit_doctor_details.dart';
+import 'package:pulse_max/features/measurement/presentation/cubit/measurement_cubit.dart';
 import 'package:pulse_max/features/measurement/presentation/pages/measurement_page.dart';
 import 'package:pulse_max/features/message/presentation/cubits/chats_cubit.dart';
 import 'package:pulse_max/features/message/presentation/screens/user_chats_screen.dart';
@@ -29,8 +32,11 @@ class _InitialScreenState extends State<InitialScreen> {
         ..getChats(context.read<AppUserCubit>().state.user!.uid!),
       child: const UserChatsScreen(),
     ),
-    const MeasurementPage(),
-     ProfilePage(),
+    BlocProvider(
+      create: (context) => getIt<MeasurementCubit>()..startMeasuring(),
+      child: const MeasurementPage(),
+    ),
+    ProfilePage(),
   ];
 
   @override
@@ -45,9 +51,14 @@ class _InitialScreenState extends State<InitialScreen> {
         },
         children: _pages,
       ),
+      floatingActionButton: CustomFloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, RouteNames.askAi);
+        },
+      ),
       bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.teal,backgroundColor:  Colors.grey[100],
-        
+        selectedItemColor: Colors.teal, backgroundColor: Colors.grey[100],
+
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {

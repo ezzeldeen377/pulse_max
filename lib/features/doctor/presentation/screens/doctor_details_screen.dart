@@ -85,8 +85,8 @@ class DoctorDetailsScreen extends StatelessWidget {
                   children: [
                     const StatItem(
                         count: '100+', label: 'Patients', icon: Icons.person),
-                    const StatItem(
-                        count: '100+', label: 'Years Exp', icon: Icons.work),
+                     StatItem(
+                        count: doctor.yearsOfExperience?.toStringAsFixed(1)??'', label: 'Years Exp', icon: Icons.work),
                     // StatItem(count: '10+', label: 'Years Exp.', icon: Icons.work),
                     StatItem(count: doctor.rating==null ? 'no rated' : doctor.rating!.toStringAsFixed(1), label: 'Rating', icon: Icons.star),
                     const StatItem(
@@ -104,7 +104,7 @@ class DoctorDetailsScreen extends StatelessWidget {
                 const Text('Working Hours',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 const WorkingHoursWidget(),
-                const Spacer(),
+                const SizedBox(height: 24),
                 Row(
                   children: [
                     Expanded(
