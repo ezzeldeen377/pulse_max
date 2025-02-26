@@ -56,94 +56,52 @@ class _DoctorsScreenState extends State<DoctorsScreen>
           .toList();
     }
 
-    return DefaultTabController(
-      length: 8,
-      child: Scaffold(
-        backgroundColor:  Colors.grey[100],
-          body: Column(
-        children: [
-          const SizedBox(height: 20),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 10.w),
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: TextField(
-                decoration: const InputDecoration(
-                  hintText: "Search",
-                  prefixIcon: Icon(Icons.search, color: Colors.grey),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(vertical: 14),
-                ),
-                onChanged: (value) {
-                  query = value;
-                  setState(() {});
-                }),
+    return Scaffold(
+      backgroundColor:  Colors.grey[100],
+        body: Column(
+      children: [
+        const SizedBox(height: 20),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 10.w),
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(30),
           ),
-          TabBar(
-            controller: _tabController,
-            isScrollable: true,
-            dividerColor: Colors.transparent,
-            indicatorColor:Colors.transparent ,
-            labelColor: Colors.white,
-            tabAlignment: TabAlignment.start,
-            unselectedLabelColor: Colors.teal,
-            splashFactory:NoSplash.splashFactory ,
-         
-                onTap: (index) async {
-                 await context.read<DoctorsCubit>().getDoctorss(index==0?null:categories[index]);
-
-                  setState(()  {
+          child: TextField(
+              decoration: const InputDecoration(
+                hintText: "Search",
+                prefixIcon: Icon(Icons.search, color: Colors.grey),
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.symmetric(vertical: 14),
+              ),
+              onChanged: (value) {
+                query = value;
+                setState(() {});
+              }),
+        ),
+        const SizedBox(height: 20),
+     
+        Expanded(
+          child: BlocBuilder<DoctorsCubit, DoctorsState>(
+            builder: (context, state) {
+              if (state.isLoading)
+                return const Center(
+                    child: CircularProgressIndicator(
+                  color: Colors.teal,
+                ));
+              if (filteredDoctors.isEmpty)
+                return const Center(child: Text('No Doctor Found '));
+              return ListView.builder(
+                  itemCount: filteredDoctors.length,
+                  itemBuilder: (context, index) {
+                    return DoctorItem(
+                      doctor: filteredDoctors[index],
+                    );
                   });
-                },
-            tabs: categories.map((category) {
-              bool isSelected=_tabController.index==categories.indexOf(category);
-              return Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color:
-                      isSelected ? Colors.teal : Colors.white,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(25),
-                  ),
-                  border: Border.all(color: Colors.teal, width: 1),
-                ),
-                child: Text(
-                  category,
-                  style: 
-                      TextStyle(color:isSelected? Colors.white:Colors.teal)
-                    
-                ),
-              );
-            }).toList(),
+            },
           ),
-          SizedBox(
-            height: 10.h,
-          ),
-          Expanded(
-            child: BlocBuilder<DoctorsCubit, DoctorsState>(
-              builder: (context, state) {
-                if (state.isLoading)
-                  return const Center(
-                      child: CircularProgressIndicator(
-                    color: Colors.teal,
-                  ));
-                if (filteredDoctors.isEmpty)
-                  return const Center(child: Text('No Doctor Found '));
-                return ListView.builder(
-                    itemCount: filteredDoctors.length,
-                    itemBuilder: (context, index) {
-                      return DoctorItem(
-                        doctor: filteredDoctors[index],
-                      );
-                    });
-              },
-            ),
-          )
-        ],
-      )),
-    );
+        )
+      ],
+    ));
   }
 }

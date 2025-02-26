@@ -10,4 +10,6 @@ class RouteNames {
   static const measurement = '/measurement';
   static const initial = '/initial';
   static const editDoctor = '/editDoctor';
+  static const alarm = '/alarm';
+  static const askAi = '/askAi';
 }

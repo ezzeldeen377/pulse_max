@@ -28,6 +28,7 @@ class DoctorsCubit extends Cubit<DoctorsState> {
       : super(DoctorsState(status: DoctorsStatus.initial));
 
   Future<void> getDoctorss(String? category) async {
+    print("hereeeeeeeeeeeeeeeeeeeeeeeeee");
     emit(state.copyWith(status: DoctorsStatus.loading));
     final result = await getDoctors.call(category);
     result.fold(

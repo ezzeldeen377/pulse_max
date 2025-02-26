@@ -64,15 +64,18 @@ class AppPallete {
 }
 
 class AppColor {
-  static const Color primaryColor = Color(0xFF1A73E8); // Blue for buttons
-  static const Color primaryTextColor =
-      Color(0xFF333333); // Dark gray for main text
-  static const Color secondaryTextColor =
-      Color(0xFF757575); // Gray for secondary text
-  static const Color backgroundColor =
-      Color(0xFFFFFFFF); // Light gray for background
-  static const Color borderColor = Color(0xFFE0E0E0);
-  static const Color lightBlue = Color(0xFFdbeaff);
-  static const Color teal = Color(0xFF1A998E);
-  static const Color lightTeal = Color(0xFFE2F7F7);
+  static const Color primaryColor = Color(0xFF009688); // Teal for primary elements
+  static const Color primaryTextColor = Color(0xFF333333); // Dark gray for main text
+  static const Color secondaryTextColor = Color(0xFF757575); // Gray for secondary text
+  static const Color backgroundColor = Color(0xFFFFFFFF); // White background
+  static const Color borderColor = Color(0xFFE0E0E0); // Light gray for borders
+  static const Color teal = Color(0xFF009688); // Main teal color
+  static const Color lightTeal = Color(0xFFE0F2F1); // Light teal for backgrounds
+  static const Color darkTeal = Color(0xFF00796B); // Dark teal for emphasis
+  static const Color accentTeal = Color(0xFF4DB6AC); // Accent teal for highlights
+  static const LinearGradient chatGradient = LinearGradient(
+    begin: Alignment.topRight,
+    end: Alignment.bottomLeft,
+    colors: [Color(0xFF009688), Color(0xFF26A69A)],
+  );
 }

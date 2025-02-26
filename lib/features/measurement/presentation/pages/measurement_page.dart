@@ -1,62 +1,19 @@
-import 'dart:async';
-import 'dart:math';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:pulse_max/core/helpers/notification_service.dart';
 import 'package:pulse_max/core/theme/app_pallete.dart';
+import 'package:pulse_max/features/measurement/presentation/cubit/measurement_cubit.dart';
 
-class MeasurementPage extends StatefulWidget {
-  const MeasurementPage({super.key});
+class MeasurementPage extends StatelessWidget {
+   MeasurementPage({super.key});
 
-  @override
-  createState() => _MeasurementPage();
-}
-
-class _MeasurementPage extends State<MeasurementPage> {
-  final Random _random = Random();
-  late Timer _timer;
-
-  int tpm = 0;
-  int temperature = 0;
-
-  final List<FlSpot> _graphData = [];
-  int _timeCounter = 0;
-
-  // Define the primary color
   final Color primaryColor = const Color(0xFF1A998E);
 
-  @override
-  void initState() {
-    super.initState();
-    _graphData.add(const FlSpot(0, 0)); // Ensure it's never empty
-    _startUpdatingData();
-  }
+  final List<FlSpot> _graphData = [];
 
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
-  }
-
-  void _startUpdatingData() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        // Generate random values
-        tpm = 60 + _random.nextInt(61); // Random TPM between 60 and 120
-        temperature = 34 + _random.nextInt(7); // Random temperature between 34 and 40
-
-        // Update graph data
-        _graphData.add(FlSpot(_timeCounter.toDouble(), tpm.toDouble()));
-        _timeCounter++;
-
-        // Keep only the latest 20 points
-        if (_graphData.length > 20) {
-          _graphData.removeAt(0); // Remove the oldest value
-        }
-      });
-    });
-  }
+  int _timeCounter = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -70,17 +27,44 @@ class _MeasurementPage extends State<MeasurementPage> {
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.black),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+      body: BlocBuilder<MeasurementCubit, MeasurementState>(
+        builder: (context, state) {
+          if (state.status.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state.status.isError) {
+            return Center(child: Text(state.errorMessage ?? 'An error occurred'));
+          }
+
+          if (state.status.isSuccess && state.measurement != null) {
+            final measurement = state.measurement!;
+            
+            // Update graph data
+            _graphData.add(FlSpot(_timeCounter.toDouble(), measurement.voltage?.toDouble()??0));
+            _timeCounter++;
+
+            // Keep only the latest 20 points
+            if (_graphData.length > 20) {
+              _graphData.removeAt(0);
+            }
+
+            // Show notification if pulse is 100 or higher
+            if (measurement.pulse! >= 100) {
+              NotificationService.dangerAlert(measurement.pulse?.toInt()??100);
+            }
+
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Real-time data display
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildDataCard('Pulse', tpm.toString(), Icons.favorite, 'bpm'),
-                _buildDataCard('Temperature', '$temperature °C', Icons.thermostat, '°c'),
+                _buildDataCard('Pulse', measurement.pulse.toString(), Icons.favorite, 'bpm'),
+                      _buildDataCard('Temperature', measurement.temperature!.toStringAsFixed(1), Icons.thermostat, '°C'),
               ],
             ),
             const SizedBox(height: 24),
@@ -127,7 +111,7 @@ class _MeasurementPage extends State<MeasurementPage> {
                         axisNameWidget: const Padding(
                           padding: EdgeInsets.only(right: 10.0),
                           child: Text(
-                            'bpm',
+                            'voltage',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -189,7 +173,7 @@ class _MeasurementPage extends State<MeasurementPage> {
                       show: true,
                       drawHorizontalLine: true,
                       drawVerticalLine: true,
-                      verticalInterval: 10,
+                      verticalInterval: 1,
                       horizontalInterval: 20,
                       getDrawingVerticalLine: (value) {
                         return FlLine(
@@ -204,15 +188,20 @@ class _MeasurementPage extends State<MeasurementPage> {
                         );
                       },
                     ),
-                    minY: 40, // Minimum value for Y-axis
-                    maxY: 140, // Maximum value for Y-axis
+                    minY: 0, // Minimum value for Y-axis
+                    maxY: 10, // Maximum value for Y-axis
                     backgroundColor: primaryColor, // Chart background color
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+                ],
+              ),
+            );
+          }
+
+          return const Center(child: Text('Start measuring...'));
+        },
       ),
     );
   }

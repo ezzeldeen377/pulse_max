@@ -236,18 +236,11 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             Text(_user.id == widget.chat.senderId
                 ? widget.chat.receiverName ?? ''
-                : widget.chat.senderName ?? ''),
+                : widget.chat.senderName ?? '',style: const TextStyle(fontSize: 16),),
           ],
         ),
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.video_call),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.call),
-          ),
+         
           IconButton(
             onPressed: () {},
             icon: const Icon(Icons.more_vert),

@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:pulse_max/core/routes/routes.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pulse_max/core/di/di.dart';
+import 'package:pulse_max/features/doctor/data/models/doctor.dart';
+import 'package:pulse_max/features/doctor/presentation/bloc/doctors/doctors_cubit.dart';
+import 'package:pulse_max/features/doctor/presentation/bloc/doctors/doctors_state.dart';
+import 'package:pulse_max/features/home/presentation/widgets/doctor_home_card.dart';
 
 class DoctorSpecialitySection extends StatelessWidget {
   final List<Map<String, dynamic>> categories = [
@@ -12,9 +17,7 @@ class DoctorSpecialitySection extends StatelessWidget {
     {'icon': Icons.remove_red_eye, 'title': 'Ophthalmology'},
     {'icon': Icons.more_horiz, 'title': null},
   ];
-
-   DoctorSpecialitySection({super.key});
-
+  DoctorSpecialitySection({super.key});
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -29,50 +32,52 @@ class DoctorSpecialitySection extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {},
-              child: const Text("See All", style: TextStyle(color: Colors.teal)),
+              child:
+                  const Text("See All", style: TextStyle(color: Colors.teal)),
             ),
           ],
         ),
         const SizedBox(height: 10),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 4,
-            childAspectRatio: 0.8,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-          ),
-          itemCount: categories.length,
-          itemBuilder: (context, index) {
-            return Column(
-              children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(context,RouteNames.doctorsScreen,arguments:categories[index]['title'] );
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.teal, width: 1.5),
-                    ),
-                    child: Icon(
-                      categories[index]['icon'],
-                      color: Colors.teal,
-                      size: 30,
-                    ),
+        SizedBox(
+          height: 230,
+          width: double.infinity,
+          child: BlocBuilder<DoctorsCubit, DoctorsState>(
+            bloc: getIt<DoctorsCubit>()..getDoctorss(null),
+            builder: (context, state) {
+              if (state.status == DoctorsStatus.loading) {
+                return const Center(
+                  child: CircularProgressIndicator(color: Colors.teal),
+                );
+              }
+
+              if (state.status == DoctorsStatus.error) {
+                return Center(
+                  child: Text(
+                    state.errorMessage ?? 'Something went wrong',
+                    style: const TextStyle(color: Colors.red),
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  categories[index]['title']??'More',
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            );
-          },
+                );
+              }
+
+              if (state.doctors == null || state.doctors!.isEmpty) {
+                return const Center(
+                  child: Text('No doctors available'),
+                );
+              }
+
+              final doctorList = state.doctors??[];
+              return ListView.separated(
+                separatorBuilder: (context, index) => const SizedBox(width: 10),
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                itemCount: doctorList.length,
+                itemBuilder: (context, index) {
+                  final doctor = doctorList[index];
+                  return DoctorHomeCard(doctor: doctor);
+                },
+              );
+            },
+          ),
         ),
       ],
     );

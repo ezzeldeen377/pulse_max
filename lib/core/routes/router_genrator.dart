@@ -3,6 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pulse_max/core/common/cubit/app_user/app_user_cubit.dart';
 import 'package:pulse_max/core/di/di.dart';
 import 'package:pulse_max/core/routes/routes.dart';
+import 'package:pulse_max/features/alarm/presentation/cubit/medicine_cubit.dart';
+import 'package:pulse_max/features/alarm/presentation/pages/alarm_page.dart';
+import 'package:pulse_max/features/ask_ai/presentation/cubit/ask_ai_cubit.dart';
+import 'package:pulse_max/features/ask_ai/presentation/ui/ask_ai_screen.dart';
 import 'package:pulse_max/features/home/presentation/pages/home_screen.dart';
 import 'package:pulse_max/core/screens/initial_screen.dart';
 import 'package:pulse_max/features/authentication/presentation/cubits/sign_in_cubit/sign_in_cubit.dart';
@@ -73,7 +77,7 @@ class PulseMaxRouter {
                   child: const UserChatsScreen(),
                 ));
       case RouteNames.measurement:
-        return MaterialPageRoute(builder: (context) => const MeasurementPage());
+        return MaterialPageRoute(builder: (context) =>  MeasurementPage());
       case RouteNames.initial:
         return MaterialPageRoute(builder: (context) => const InitialScreen());
       case RouteNames.editDoctor:
@@ -82,6 +86,18 @@ class PulseMaxRouter {
                   create: (context) => getIt<DoctorBloc>()..initState(settings.arguments as DoctorModel),
                   child: const EditProfileScreen(),
                 ));
+      case RouteNames.alarm:
+        return MaterialPageRoute(
+            builder: (context) =>  BlocProvider(
+  create: (context) => getIt<MedicineCubit>()..getMedicines(),
+  child: const AlarmPage(),
+));
+      case RouteNames.askAi:
+        return MaterialPageRoute(
+            builder: (context) =>  BlocProvider(
+  create: (context) => getIt<AskAiCubit>(),
+  child: const AskAiScreen(),
+));
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
