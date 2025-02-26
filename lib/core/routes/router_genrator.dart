@@ -77,7 +77,7 @@ class PulseMaxRouter {
                   child: const UserChatsScreen(),
                 ));
       case RouteNames.measurement:
-        return MaterialPageRoute(builder: (context) => const MeasurementPage());
+        return MaterialPageRoute(builder: (context) =>  MeasurementPage());
       case RouteNames.initial:
         return MaterialPageRoute(builder: (context) => const InitialScreen());
       case RouteNames.editDoctor:
